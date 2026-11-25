@@ -1,0 +1,59 @@
+# Local WooCommerce test harness for the Agent Ready Shop plugin.
+#
+#   docker compose up -d
+#   docker compose run --rm wpcli   # installs WP + WooCommerce + activates the plugin
+#   open http://localhost:8080       (admin / admin  at /wp-admin)
+#
+# The plugin is bind-mounted, so edits on the host are live in the container.
+
+services:
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  wordpress:
+    image: wordpress:6.6-php8.2-apache
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp:/var/www/html
+      - ./plugin/agent-ready-shop:/var/www/html/wp-content/plugins/agent-ready-shop
+
+  # One-shot provisioning: install WP, WooCommerce, activate our plugin, seed a product.
+  wpcli:
+    image: wordpress:cli-php8.2
+    depends_on:
+      - wordpress
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp:/var/www/html
+      - ./plugin/agent-ready-shop:/var/www/html/wp-content/plugins/agent-ready-shop
+      - ./test/wp-setup.sh:/wp-setup.sh
+    entrypoint: ["sh", "/wp-setup.sh"]
+
+volumes:
+  db:
+  wp:

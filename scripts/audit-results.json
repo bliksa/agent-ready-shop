@@ -1,0 +1,194 @@
+[
+  {
+    "domain": "gymbeam.sk",
+    "total": 75,
+    "platform": "Magento",
+    "blocked": false,
+    "productPage": "https://gymbeam.sk/catalog/product/view/id/28082",
+    "passed": [
+      "robots",
+      "schema",
+      "llms",
+      "api"
+    ],
+    "scores": {
+      "robots": {
+        "score": 15,
+        "pass": true
+      },
+      "schema": {
+        "score": 20,
+        "pass": true
+      },
+      "llms": {
+        "score": 15,
+        "pass": true
+      },
+      "feed": {
+        "score": 10,
+        "pass": false
+      },
+      "api": {
+        "score": 15,
+        "pass": true
+      },
+      "agent": {
+        "score": 0,
+        "pass": false
+      }
+    }
+  },
+  {
+    "domain": "www.gymbeam.sk",
+    "total": 75,
+    "platform": "Magento",
+    "blocked": false,
+    "productPage": "https://gymbeam.sk/catalog/product/view/id/28082",
+    "passed": [
+      "robots",
+      "schema",
+      "llms",
+      "api"
+    ],
+    "scores": {
+      "robots": {
+        "score": 15,
+        "pass": true
+      },
+      "schema": {
+        "score": 20,
+        "pass": true
+      },
+      "llms": {
+        "score": 15,
+        "pass": true
+      },
+      "feed": {
+        "score": 10,
+        "pass": false
+      },
+      "api": {
+        "score": 15,
+        "pass": true
+      },
+      "agent": {
+        "score": 0,
+        "pass": false
+      }
+    }
+  },
+  {
+    "domain": "dedoles.sk",
+    "total": 67,
+    "platform": "Shopify",
+    "blocked": false,
+    "productPage": "https://dedoles.sk/agents.md",
+    "passed": [
+      "llms",
+      "feed",
+      "api"
+    ],
+    "scores": {
+      "robots": {
+        "score": 8,
+        "pass": false
+      },
+      "schema": {
+        "score": 14,
+        "pass": false
+      },
+      "llms": {
+        "score": 15,
+        "pass": true
+      },
+      "feed": {
+        "score": 15,
+        "pass": true
+      },
+      "api": {
+        "score": 15,
+        "pass": true
+      },
+      "agent": {
+        "score": 0,
+        "pass": false
+      }
+    }
+  },
+  {
+    "domain": "colourpop.com",
+    "total": 67,
+    "platform": "Shopify",
+    "blocked": false,
+    "productPage": "https://colourpop.com/agents.md",
+    "passed": [
+      "llms",
+      "feed",
+      "api"
+    ],
+    "scores": {
+      "robots": {
+        "score": 8,
+        "pass": false
+      },
+      "schema": {
+        "score": 14,
+        "pass": false
+      },
+      "llms": {
+        "score": 15,
+        "pass": true
+      },
+      "feed": {
+        "score": 15,
+        "pass": true
+      },
+      "api": {
+        "score": 15,
+        "pass": true
+      },
+      "agent": {
+        "score": 0,
+        "pass": false
+      }
+    }
+  },
+  {
+    "domain": "kith.com",
+    "total": 67,
+    "platform": "WordPress",
+    "blocked": false,
+    "productPage": "https://kith.com/agents.md",
+    "passed": [
+      "llms",
+      "feed",
+      "api"
+    ],
+    "scores": {
+      "robots": {
+        "score": 8,
+        "pass": false
+      },
+      "schema": {
+        "score": 14,
+        "pass": false
+      },
+      "llms": {
+        "score": 15,
+        "pass": true
+      },
+      "feed": {
+        "score": 15,
+        "pass": true
+      },
+      "api": {
+        "score": 15,
+        "pass": true
+      },
+      "agent": {
+        "score": 0,
+        "pass": false
+      }
+    }
+  }
+]

@@ -1,0 +1,6 @@
+{
+  "name": "Agent Ready Shop",
+  "description": "AI-commerce analyzer, WooCommerce plugin and Agent Ready certification for online stores.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

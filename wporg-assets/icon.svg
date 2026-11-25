@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <rect width="256" height="256" rx="52" fill="#1d2327"/>
+  <!-- robot head -->
+  <rect x="72" y="86" width="112" height="86" rx="20" fill="#2271b1"/>
+  <rect x="60" y="112" width="10" height="36" rx="5" fill="#2271b1"/>
+  <rect x="186" y="112" width="10" height="36" rx="5" fill="#2271b1"/>
+  <circle cx="104" cy="126" r="12" fill="#ffffff"/>
+  <circle cx="152" cy="126" r="12" fill="#ffffff"/>
+  <rect x="98" y="150" width="60" height="10" rx="5" fill="#ffffff"/>
+  <!-- antenna -->
+  <rect x="122" y="60" width="12" height="22" rx="6" fill="#5fce8b"/>
+  <circle cx="128" cy="56" r="10" fill="#5fce8b"/>
+  <!-- certified check badge -->
+  <circle cx="182" cy="178" r="30" fill="#0a7d28" stroke="#1d2327" stroke-width="6"/>
+  <path d="M169 178 l9 9 l16 -18" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

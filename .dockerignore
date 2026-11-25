@@ -1,0 +1,9 @@
+node_modules
+dist
+release
+secrets
+.git
+*.log
+agent-ready-shop-final.zip
+run.out.txt
+run.err.txt

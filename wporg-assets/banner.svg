@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1544 500" width="1544" height="500">
+  <rect width="1544" height="500" fill="#1d2327"/>
+  <rect width="1544" height="500" fill="url(#g)"/>
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#1d2327"/><stop offset="1" stop-color="#14181b"/>
+  </linearGradient></defs>
+
+  <!-- brand mark -->
+  <g transform="translate(96,150)">
+    <rect width="200" height="200" rx="44" fill="#0f1316"/>
+    <rect x="52" y="60" width="96" height="74" rx="17" fill="#2271b1"/>
+    <circle cx="80" cy="94" r="10" fill="#fff"/><circle cx="120" cy="94" r="10" fill="#fff"/>
+    <rect x="76" y="116" width="48" height="8" rx="4" fill="#fff"/>
+    <rect x="94" y="40" width="10" height="18" rx="5" fill="#5fce8b"/><circle cx="99" cy="37" r="8" fill="#5fce8b"/>
+    <circle cx="150" cy="150" r="26" fill="#0a7d28" stroke="#0f1316" stroke-width="5"/>
+    <path d="M139 150 l7 7 l14 -15" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- text -->
+  <text x="340" y="235" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="700" fill="#ffffff">Agent Ready Shop</text>
+  <text x="342" y="292" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#c3c4c7">AI agent optimization &amp; certification for WooCommerce</text>
+  <g transform="translate(342,330)">
+    <rect width="270" height="40" rx="8" fill="#0a7d28"/>
+    <text x="135" y="27" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle">AGENT READY CERTIFIED</text>
+  </g>
+  <text x="628" y="357" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#8c8f94">llms.txt · JSON-LD · Agent API · checkout</text>
+</svg>

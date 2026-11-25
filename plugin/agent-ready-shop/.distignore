@@ -1,0 +1,5 @@
+# Files excluded from the distributed plugin (WordPress.org).
+tools/
+.distignore
+*.map
+.DS_Store
