@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { withBase } from './utils/base';
 import { KeyRound, Copy, Check, Download, Loader2, ArrowLeft } from 'lucide-react';
 
 const FEATURE_CODES = [
@@ -30,7 +31,7 @@ export function LicenseGenerator({ onBack }: { onBack: () => void }) {
     try {
       const params = new URLSearchParams({ plan, features: featureStr, expires: expires || 'never', count: String(count) });
       if (token) params.set('token', token);
-      const res = await fetch(`/api/license/generate?${params}`);
+      const res = await fetch(withBase(`/api/license/generate?${params}`));
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed');
       setKeys(data.keys.map((k: any) => k.key));

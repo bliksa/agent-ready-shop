@@ -29,12 +29,37 @@ Environment variables:
 | Var | When | Value |
 |---|---|---|
 | `NODE_ENV` | always | `production` |
+| `BASE_PATH` | only when hosted in a subdirectory | e.g. `/ashop` (build **and** run) |
 | `PORT` | if the host sets it | host-provided, else 3000 |
 | `ARS_ADMIN_TOKEN` | if you use the license generator (`/#generator`) | a long random secret |
 | `ARS_LICENSE_JWK` | only if you issue Pro licenses from this server | the JSON from `secrets/ars-license.json` → `jwk` field |
 
 > `secrets/` is git-ignored and **not** shipped. In production, pass the key as
 > `ARS_LICENSE_JWK` instead of uploading the file.
+
+---
+
+## Serving from a subdirectory (e.g. `example.com/ashop`)
+
+Set `BASE_PATH` at **both build time and run time** — it mounts the frontend,
+the API, `/verify` and the plugin download under that prefix:
+
+```bash
+BASE_PATH=/ashop npm run build
+BASE_PATH=/ashop NODE_ENV=production npm start   # → http://localhost:3000/ashop/
+```
+
+The site that owns the domain (e.g. an existing WordPress on nginx/Apache) then
+only needs to forward that one prefix to the Node process, path unchanged:
+
+```nginx
+location /ashop/ { proxy_pass http://127.0.0.1:3000; proxy_set_header Host $host; proxy_set_header X-Forwarded-Proto $scheme; }
+location = /ashop { return 301 /ashop/; }
+```
+
+Badges and update checks emitted by the plugin point at `AFS_VERIFY_BASE` /
+`AFS_UPDATE_URL` in `plugin/agent-ready-shop/agent-ready-shop.php`; change those
+if the subdirectory install is the production service.
 
 ---
 

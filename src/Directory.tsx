@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { withBase } from './utils/base';
 import { Search, ExternalLink, ShieldCheck, ArrowLeft, Radar, Award } from 'lucide-react';
 
 interface WildStore {
@@ -47,7 +48,7 @@ export function Directory({ onBack }: { onBack: () => void }) {
         <div className="inline-flex items-center gap-2 chip-gold px-3 py-1 text-sm font-medium mb-4"><ShieldCheck size={16} /> Agent Ready Certified</div>
         <h1 className="font-display text-4xl font-bold mb-2">The certified store <span className="grad-text-gold">registry</span></h1>
         <p className="text-[var(--muted)] max-w-2xl mx-auto mb-5">The registry lists stores with a live-verified Agent Ready certificate. It just opened — the first certified stores claim the top spots permanently.</p>
-        <a href="/api/download-plugin" className="btn-grad inline-flex items-center gap-2 px-5 py-2.5"><Award size={16} /> Be the first — get certified</a>
+        <a href={withBase('/api/download-plugin')} className="btn-grad inline-flex items-center gap-2 px-5 py-2.5"><Award size={16} /> Be the first — get certified</a>
       </div>
 
       {/* Wild leaderboard — real audit data */}

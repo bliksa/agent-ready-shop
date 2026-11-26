@@ -215,10 +215,13 @@ async function runAudit(targetUrl: string): Promise<AuditData> {
 
 async function startServer() {
   const app = express();
+  // BASE_PATH=/ashop mounts every route (API, verify, frontend) under a subdirectory.
+  const BASE = (process.env.BASE_PATH || '').replace(/\/+$/, '');
+  const router = express.Router();
   const PORT = Number(process.env.PORT) || 3000;
 
   // ---- Live audit ----
-  app.get('/api/run-audit', async (req, res) => {
+  router.get('/api/run-audit', async (req, res) => {
     const targetUrl = req.query.url as string;
     if (!targetUrl) return res.status(400).json({ error: 'URL is required' });
     try {
@@ -231,7 +234,7 @@ async function startServer() {
   });
 
   // ---- Badge SVG ----
-  app.get('/api/badge', (req, res) => {
+  router.get('/api/badge', (req, res) => {
     const domain = (req.query.d as string) || 'your-store.com';
     const score = Math.max(0, Math.min(100, parseInt((req.query.s as string) || '0', 10) || 0));
     const style = (req.query.style as 'dark' | 'light') === 'light' ? 'light' : 'dark';
@@ -241,7 +244,7 @@ async function startServer() {
   });
 
   // ---- Public certificate verification: LIVE re-audit of the domain ----
-  app.get(['/verify/:id', '/verify'], async (req, res) => {
+  router.get(['/verify/:id', '/verify'], async (req, res) => {
     const id = (req.params.id || (req.query.id as string) || '').toUpperCase();
     const domain = normalizeDomain((req.query.d as string) || '');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -289,7 +292,7 @@ async function startServer() {
   });
 
   // ---- Product: mint a license (in production this sits behind a payment webhook) ----
-  app.get('/api/license/issue', (req, res) => {
+  router.get('/api/license/issue', (req, res) => {
     // TODO(production): require a verified Stripe/Lemon Squeezy payment token here.
     try {
       const lic = issueLicense({
@@ -304,7 +307,7 @@ async function startServer() {
   });
 
   // ---- Vendor: batch license generator (admin-token gated) ----
-  app.get('/api/license/generate', (req, res) => {
+  router.get('/api/license/generate', (req, res) => {
     const need = process.env.ARS_ADMIN_TOKEN;
     const got = (req.query.token as string) || req.get('x-admin-token');
     // In production a token is required; in dev it's open for the generator UI.
@@ -326,18 +329,18 @@ async function startServer() {
   });
 
   // ---- Product: self-hosted update manifest for the plugin's auto-updater ----
-  app.get('/api/update/agent-ready-shop.json', (req, res) => {
+  router.get('/api/update/agent-ready-shop.json', (req, res) => {
     const origin = `${req.protocol}://${req.get('host')}`;
     res.json({
       version: APP_VERSION,
-      download_url: `${origin}/api/download-plugin`,
+      download_url: `${origin}${BASE}/api/download-plugin`,
       tested: '6.6', requires: '6.0', requires_php: '7.4',
       changelog: 'See agentreadyshop.com/changelog',
     });
   });
 
   // ---- Download the real plugin (zipped from disk) ----
-  app.get('/api/download-plugin', async (_req, res) => {
+  router.get('/api/download-plugin', async (_req, res) => {
     try {
       const root = path.join(process.cwd(), 'plugin', 'agent-ready-shop');
       if (!fs.existsSync(root)) return res.status(404).json({ error: 'Plugin source not found' });
@@ -361,15 +364,18 @@ async function startServer() {
   });
 
   if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({ server: { middlewareMode: true }, appType: 'spa' });
+    app.use(BASE || '/', router);
+    const vite = await createViteServer({ base: BASE + '/', server: { middlewareMode: true }, appType: 'spa' });
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (_req, res) => res.sendFile(path.join(distPath, 'index.html')));
+    router.use(express.static(distPath));
+    router.get('*', (_req, res) => res.sendFile(path.join(distPath, 'index.html')));
+    app.use(BASE || '/', router);
+    if (BASE) app.get('/', (_req, res) => res.redirect(BASE + '/'));
   }
 
-  const server = app.listen(PORT, '0.0.0.0', () => console.log(`Agent Ready Shop running on http://localhost:${PORT}`));
+  const server = app.listen(PORT, '0.0.0.0', () => console.log(`Agent Ready Shop running on http://localhost:${PORT}${BASE}/`));
   server.on('error', (err: NodeJS.ErrnoException) => {
     if (err.code === 'EADDRINUSE') { console.error(`\nPort ${PORT} is already in use. Try: PORT=3001 npm run dev\n`); process.exit(1); }
     throw err;

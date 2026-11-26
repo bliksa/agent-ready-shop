@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { withBase } from './utils/base';
 import { Zap, Copy, Check, Loader2, ShieldCheck } from 'lucide-react';
 
 /**
@@ -13,7 +14,7 @@ export function BuyPro() {
   const buy = async () => {
     setState('loading');
     try {
-      const res = await fetch('/api/license/issue?plan=pro&features=*&expires=never');
+      const res = await fetch(withBase('/api/license/issue?plan=pro&features=*&expires=never'));
       const data = await res.json();
       setKey(data.key);
       setState('done');

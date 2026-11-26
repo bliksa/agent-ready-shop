@@ -4,7 +4,10 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
+  // BASE_PATH=/ashop serves the whole app from a subdirectory (default: domain root).
+  const base = (process.env.BASE_PATH || '').replace(/\/+$/, '') + '/';
   return {
+    base,
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {

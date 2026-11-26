@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect, FormEvent, ReactNode } from 'react';
+import { BASE, withBase } from './utils/base';
 import { motion, AnimatePresence } from 'motion/react';
 import { Bot, Search, ShieldAlert, ShieldCheck, Cpu, Code2, CheckCircle2, XCircle, ArrowRight, Zap, RefreshCw, Globe, LayoutTemplate, Award, Sparkles, ShoppingBag, Link2, Check } from 'lucide-react';
 import { runSimulatedAudit } from './data/auditConfig';
@@ -223,7 +224,7 @@ function ScanningView({ url, message }: { url: string, message: string, key?: st
 function ResultsView({ result, onCertify }: { result: AuditResult, onCertify: () => void, key?: string }) {
   const [shared, setShared] = useState(false);
   const shareReport = () => {
-    const link = `${window.location.origin}/?audit=${encodeURIComponent(normalizeDomain(result.url))}`;
+    const link = `${window.location.origin}${BASE}/?audit=${encodeURIComponent(normalizeDomain(result.url))}`;
     navigator.clipboard?.writeText(link);
     setShared(true);
     setTimeout(() => setShared(false), 2000);
@@ -275,7 +276,7 @@ function ResultsView({ result, onCertify }: { result: AuditResult, onCertify: ()
           <h2 className="font-display text-3xl font-bold text-white">{headline}</h2>
           <p className="text-[var(--muted)] text-lg leading-relaxed"><span className="font-mono text-white">{result.url}</span> — {subline}</p>
           <div className="flex flex-wrap items-center gap-3 pt-1">
-            <a href="/api/download-plugin" className="btn-grad inline-flex items-center gap-2 px-5 py-2.5">Get the plugin — free</a>
+            <a href={withBase('/api/download-plugin')} className="btn-grad inline-flex items-center gap-2 px-5 py-2.5">Get the plugin — free</a>
             <button onClick={onCertify} className="btn-ghost inline-flex items-center gap-2 px-4 py-2.5 text-sm"><Award size={16} style={{ color: 'var(--gold)' }} /> {level === 'gold' ? 'View your badge' : 'Preview the badge'}</button>
             <button onClick={shareReport} className="btn-ghost inline-flex items-center gap-2 px-4 py-2.5 text-sm" style={{ color: 'var(--cyan)' }}>
               {shared ? <><Check size={15} /> Link copied</> : <><Link2 size={15} /> Share report</>}
@@ -310,7 +311,7 @@ function ResultsView({ result, onCertify }: { result: AuditResult, onCertify: ()
               <span className="text-white font-medium">Agent Ready Shop</span> is a WordPress plugin that does the actual engineering: it writes and maintains your llms.txt, emits clean Product schema, exposes a structured commerce API + feed, blocks training-only crawlers, measures real AI traffic, and — on Pro — lets agents complete a purchase. The work that would otherwise take a dev sprint per store.
             </p>
             <div className="flex flex-wrap gap-3 items-center">
-              <a href="/api/download-plugin" className="btn-grad px-6 py-3 flex items-center gap-2">Get the plugin — free</a>
+              <a href={withBase('/api/download-plugin')} className="btn-grad px-6 py-3 flex items-center gap-2">Get the plugin — free</a>
               <button onClick={onCertify} className="btn-ghost px-5 py-3 flex items-center gap-2 text-sm"><Award size={16} style={{ color: 'var(--gold)' }} /> See the badge you earn</button>
             </div>
           </div>

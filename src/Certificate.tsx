@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { BASE } from './utils/base';
 import { ShieldCheck, Copy, Check, ExternalLink, Download, ArrowLeft, Award } from 'lucide-react';
 import { buildCert, buildBadgeSvg, Tier } from './utils/badge';
 
@@ -14,7 +15,7 @@ export function Certificate({ domain, score, eligible, onBack }: CertificateProp
   const [style, setStyle] = useState<'dark' | 'light'>('dark');
   const [copied, setCopied] = useState<string>('');
 
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://agentreadyshop.com';
+  const origin = typeof window !== 'undefined' ? window.location.origin + BASE : 'https://agentreadyshop.com';
   const cert = useMemo(() => buildCert(domain, score), [domain, score]);
   const ui = TIER_UI[cert.tier];
 

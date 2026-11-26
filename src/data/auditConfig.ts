@@ -1,4 +1,5 @@
 import { AuditResult, AuditCheck } from '../types';
+import { withBase } from '../utils/base';
 
 export const baseChecks: AuditCheck[] = [
   {
@@ -99,7 +100,7 @@ export async function runSimulatedAudit(url: string, onProgress?: (msg: string) 
     await new Promise(r => setTimeout(r, 400));
     if (onProgress) onProgress(messages[1]);
 
-    const res = await fetch(`/api/run-audit?url=${encodeURIComponent(url)}`);
+    const res = await fetch(withBase(`/api/run-audit?url=${encodeURIComponent(url)}`));
     if (res.ok) {
       const data = await res.json();
       detectedPlatform = data.platform || 'Unknown platform';
