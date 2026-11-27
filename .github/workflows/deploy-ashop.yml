@@ -1,0 +1,54 @@
+# Builds the static + PHP website and uploads it over FTP into <web root>/ashop/.
+# Needs repository secrets: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, FTP_WEB_ROOT
+# (FTP_WEB_ROOT = the FTP path of the site's web root, e.g. "/" or "/www/").
+# Optional repository variable FTP_PROTOCOL: ftps (default) | ftp.
+name: Deploy website to /ashop
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, claude/confident-turing-2j8ecu]
+    paths: ['src/**', 'static/**', 'plugin/**', 'scripts/build-static.mjs', 'index.html', 'package*.json', 'vite.config.ts', '.github/workflows/deploy-ashop.yml']
+
+concurrency:
+  group: deploy-ashop
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:static
+
+      - name: Resolve target directory
+        id: target
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_WEB_ROOT: ${{ secrets.FTP_WEB_ROOT }}
+        run: |
+          for v in FTP_SERVER FTP_USERNAME FTP_PASSWORD FTP_WEB_ROOT; do
+            if [ -z "${!v}" ]; then echo "::error::Missing repository secret $v (Settings → Secrets and variables → Actions)"; exit 1; fi
+          done
+          # Only ever write inside the ashop/ subfolder of the web root.
+          echo "dir=${FTP_WEB_ROOT%/}/ashop/" >> "$GITHUB_OUTPUT"
+
+      - name: Upload over FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          local-dir: ./site/ashop/
+          server-dir: ${{ steps.target.outputs.dir }}
