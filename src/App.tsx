@@ -149,14 +149,40 @@ function Footer() {
   );
 }
 
+const FLAP_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const FLAP_TICK_MS = 70;
+
+/** Split-flap board. On load every tile runs through the alphabet in order and
+ *  drops onto its letter, left to right, like a departures board updating. */
 function Flaps({ text }: { text: string }) {
+  const still = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const letters = text.replace(/ /g, '').length;
+  const lastTick = 6 + (letters - 1) * 2;
+  const [tick, setTick] = useState(still ? lastTick : 0);
+
+  useEffect(() => {
+    if (tick >= lastTick) return;
+    const id = window.setTimeout(() => setTick(n => n + 1), FLAP_TICK_MS);
+    return () => window.clearTimeout(id);
+  }, [tick, lastTick]);
+
+  let index = 0;
   return (
-    <div className="flaps" aria-hidden="true">
+    <div className="flaps" role="img" aria-label={text}>
       {text.split(' ').map((w, i) => (
         <React.Fragment key={i}>
-          {i > 0 && <span className="flap-slash">/</span>}
-          <span className="flap-word">
-            {w.split('').map((ch, j) => <span className="flap" key={j}>{ch}</span>)}
+          {i > 0 && <span className="flap-slash" aria-hidden="true">/</span>}
+          <span className="flap-word" aria-hidden="true">
+            {w.split('').map((ch, j) => {
+              const remaining = Math.max(0, 6 + index++ * 2 - tick); // ticks until this tile lands
+              const at = FLAP_ALPHABET.indexOf(ch);
+              const shown = remaining && at >= 0 ? FLAP_ALPHABET[(at - remaining + 260) % 26] : ch;
+              return (
+                <span className="flap" key={j}>
+                  <span key={shown + remaining} className={`flap-ch ${remaining ? 'is-flipping' : still ? '' : 'is-landed'}`}>{shown}</span>
+                </span>
+              );
+            })}
           </span>
         </React.Fragment>
       ))}

@@ -113,11 +113,11 @@ export function buildBadgeSvg({ domain, score, style = 'dark', certified = true 
   const tier: Tier = certified && score !== null ? getTier(score) : 'none';
   const { accent, accentSoft } = COLORS[tier];
   const dark = style === 'dark';
-  const bg = dark ? '#0a0b0d' : '#ece9e2';
+  const bg = dark ? '#000000' : '#f7f4ee';
   const stroke = dark ? '#33363b' : '#c9c5bb';
-  const main = dark ? '#ece9e2' : '#0a0b0d';
+  const main = dark ? '#f7f4ee' : '#000000';
   const sub = dark ? '#6f747b' : '#5c6066';
-  const onAccent = tier === 'none' ? '#ffffff' : '#0a0b0d';
+  const onAccent = tier === 'none' ? '#ffffff' : '#000000';
   const short = tier === 'none' ? 'NOT VERIFIED' : tierShort(tier);
   const dom = normalizeDomain(domain).slice(0, 24).replace(/[^a-z0-9.\-]/g, '');
   const num = score === null ? '–' : String(Math.round(score));

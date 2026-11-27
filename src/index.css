@@ -9,19 +9,19 @@
  */
 
 :root {
-  --bg: #0a0b0d;
-  --bg2: #111317;
-  --bg3: #181b20;
-  --bg4: #20242a;
-  --line: rgba(236, 233, 226, 0.12);
-  --line2: rgba(236, 233, 226, 0.26);
-  --ink: #ece9e2;
-  --ink2: #a9adb3;
-  --ink3: #6f747b;
+  --bg: #000000;
+  --bg2: #08080a;
+  --bg3: #0f1012;
+  --bg4: #17181b;
+  --line: rgba(245, 242, 236, 0.16);
+  --line2: rgba(245, 242, 236, 0.34);
+  --ink: #f7f4ee;
+  --ink2: #c9ccd1;
+  --ink3: #8e939a;
   --clay: #d97757;
   --clay2: #f0936f;
   /* chrome: the grey that breaks up the black — bands, tiles, the top bar */
-  --chrome: linear-gradient(180deg, #41454b 0%, #262a2f 24%, #30343a 58%, #1b1d21 100%);
+  --chrome: linear-gradient(180deg, #24262a 0%, #111214 24%, #18191c 58%, #060607 100%);
   --chrome-edge: rgba(236, 233, 226, 0.34);
   /* subdued semantic pair — used for pass / fail only */
   --pass: #8fad8a;
@@ -62,7 +62,7 @@ input, select, textarea { color-scheme: dark; }
 @layer components {
 /* ---------- layout ---------- */
 .shell { min-height: 100vh; background: var(--bg); color: var(--ink); overflow-x: clip; }
-.wrap { width: 100%; max-width: 1360px; margin-inline: auto; padding-inline: 16px; }
+.wrap { width: 100%; max-width: 1720px; margin-inline: auto; padding-inline: 16px; }
 @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
 @media (min-width: 1100px) { .wrap { padding-inline: 52px; } }
 .view { animation: view-in .25s ease-out both; }
@@ -85,7 +85,7 @@ input, select, textarea { color-scheme: dark; }
 .code { font-family: var(--mono); font-size: 0.86em; color: var(--ink); overflow-wrap: anywhere; }
 
 /* ---------- header ---------- */
-.topbar { position: sticky; top: 0; z-index: 50; background: linear-gradient(180deg, #30343a, #1a1c20); border-bottom: 1px solid var(--chrome-edge); }
+.topbar { position: sticky; top: 0; z-index: 50; background: linear-gradient(180deg, #141518, #000000); border-bottom: 1px solid var(--chrome-edge); }
 .topbar-row { height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .wordmark { display: inline-flex; align-items: flex-end; gap: 12px; background: none; border: 0; padding: 0; cursor: pointer; position: relative; color: var(--ink); white-space: nowrap; }
 /* The logo is drawn 22% taller than its cap height (the check overshoots), so 22px gives 18px letters. */
@@ -116,7 +116,7 @@ input, select, textarea { color-scheme: dark; }
 .field-sm { min-height: 42px; font-size: 14px; padding: 8px 12px; }
 
 /* ---------- surfaces ---------- */
-.panel { background: linear-gradient(180deg, #1f2226, #121417); border: 1px solid var(--line2); }
+.panel { background: linear-gradient(180deg, #111214, #050506); border: 1px solid var(--line2); }
 .panel-strong { border-color: var(--line2); }
 .inset { background: var(--bg3); border: 1px solid var(--line); }
 .tag { display: inline-flex; align-items: center; gap: 8px; padding: 4px 9px; border: 1px solid var(--line2); font-family: var(--mono); font-weight: 500; font-size: 10px; line-height: 1.4; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink2); white-space: nowrap; }
@@ -157,10 +157,10 @@ input, select, textarea { color-scheme: dark; }
 .hero { position: relative; isolation: isolate; padding-block: clamp(40px, 6vw, 80px) clamp(48px, 7vw, 96px); min-height: min(78vh, 720px); display: flex; flex-direction: column; justify-content: center; }
 .hero-bg { position: absolute; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%); z-index: -1; background-color: var(--bg); background-repeat: no-repeat; background-size: cover; background-position: 78% 28%; border-bottom: 1px solid var(--chrome-edge); }
 /* The scrim keeps the copy readable: solid on the text side, clear over her face. */
-.hero-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 17%, rgba(10, 11, 13, 0.84) 40%, rgba(10, 11, 13, 0.3) 66%, rgba(10, 11, 13, 0.06) 100%), linear-gradient(180deg, rgba(10, 11, 13, 0.5) 0%, transparent 22%, transparent 78%, rgba(10, 11, 13, 0.7) 100%); }
+.hero-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 17%, rgba(0, 0, 0, 0.84) 40%, rgba(0, 0, 0, 0.3) 66%, rgba(0, 0, 0, 0.06) 100%), linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, transparent 22%, transparent 78%, rgba(0, 0, 0, 0.7) 100%); }
 /* On wide screens the still is pushed right so her face clears the copy; the scrim hides its left edge. */
 @media (min-width: 901px) { .hero-bg { background-position: calc(50% + 15vw) 28%; } }
-@media (max-width: 900px) { .hero-bg::after { background: linear-gradient(180deg, rgba(10, 11, 13, 0.72), rgba(10, 11, 13, 0.9)); } }
+@media (max-width: 900px) { .hero-bg::after { background: linear-gradient(180deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.9)); } }
 .hero-credit { position: absolute; right: 0; bottom: 14px; text-decoration: none; }
 .hero-credit:hover { color: var(--ink); }
 
@@ -171,7 +171,7 @@ input, select, textarea { color-scheme: dark; }
 /* A band that ends the page runs down to the footer, with no black strip under it. */
 main > .view > .chrome-band:last-child { margin-bottom: -6rem; }
 .chrome-band .cells, .chrome-band .cell { border-color: rgba(236, 233, 226, 0.22); }
-.chrome-band .body, .chrome-band .small { color: #c6c9cd; }
+.chrome-band .body, .chrome-band .small { color: #dcdee1; }
 
 /* The claim under the tiles stays on one line where it fits, and never leaves one word alone on a line. */
 .hero-title { text-wrap: balance; }
@@ -183,7 +183,15 @@ main > .view > .chrome-band:last-child { margin-bottom: -6rem; }
 /* The clay slash between the two words — the same slash as in the wordmark. */
 .flap-slash { font-family: var(--sans); font-weight: 700; font-size: clamp(50px, 6.6vw, 92px); line-height: 1; color: var(--clay); }
 .flap-word { display: flex; gap: clamp(4px, 0.5vw, 7px); }
-.flap { position: relative; display: grid; place-items: center; width: clamp(50px, 6.1vw, 84px); height: clamp(68px, 8.4vw, 115px); background: linear-gradient(180deg, #4b5057 0%, #2b2f34 49%, #1c1f23 51%, #353a40 100%); border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(236, 233, 226, 0.16); font-family: var(--sans); font-weight: 700; font-size: clamp(42px, 5.4vw, 76px); line-height: 1; color: var(--ink); }
+.flap { position: relative; display: grid; place-items: center; width: clamp(50px, 6.1vw, 84px); height: clamp(68px, 8.4vw, 115px); background: linear-gradient(180deg, #2a2d31 0%, #131417 49%, #050506 51%, #1a1c1f 100%); border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(236, 233, 226, 0.16); font-family: var(--sans); font-weight: 700; font-size: clamp(42px, 5.4vw, 76px); line-height: 1; color: var(--ink); }
+/* Split-flap board: each tile runs through the alphabet and drops onto its letter. */
+.flap { perspective: 320px; }
+.flap-ch { display: block; transform-origin: 50% 50%; backface-visibility: hidden; }
+.flap-ch.is-flipping { animation: flap-drop 70ms cubic-bezier(.3, 0, .7, 1) both; }
+.flap-ch.is-landed { animation: flap-land 220ms cubic-bezier(.2, .9, .3, 1.2) both; }
+@keyframes flap-drop { from { transform: rotateX(-88deg); opacity: 0.35; } to { transform: rotateX(0); opacity: 1; } }
+@keyframes flap-land { from { transform: rotateX(-88deg); } 70% { transform: rotateX(8deg); } to { transform: rotateX(0); } }
+@media (prefers-reduced-motion: reduce) { .flap-ch { animation: none !important; } }
 .flap::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, 0.9); box-shadow: 0 1px 0 rgba(236, 233, 226, 0.05); }
 
 /* ---------- machine-vision annotation ---------- */
@@ -191,7 +199,7 @@ main > .view > .chrome-band:last-child { margin-bottom: -6rem; }
 .detect::before, .detect::after { content: ""; position: absolute; width: 7px; height: 7px; pointer-events: none; }
 .detect::before { left: -4px; top: -4px; border-left: 1px solid var(--clay); border-top: 1px solid var(--clay); }
 .detect::after { right: -4px; bottom: -4px; border-right: 1px solid var(--clay); border-bottom: 1px solid var(--clay); }
-.detect-label { position: absolute; left: -1px; bottom: 100%; margin-bottom: 5px; padding: 1px 6px; background: rgba(10, 11, 13, 0.88); font-family: var(--mono); font-weight: 500; font-size: 10.5px; line-height: 1.5; letter-spacing: 0.02em; color: var(--ink); white-space: nowrap; }
+.detect-label { position: absolute; left: -1px; bottom: 100%; margin-bottom: 5px; padding: 1px 6px; background: rgba(0, 0, 0, 0.88); font-family: var(--mono); font-weight: 500; font-size: 10.5px; line-height: 1.5; letter-spacing: 0.02em; color: var(--ink); white-space: nowrap; }
 .detect-label b { font-weight: 500; color: var(--clay2); }
 .detect-dim { border-color: rgba(236, 233, 226, 0.3); }
 .detect-dim .detect-label { color: var(--ink2); }

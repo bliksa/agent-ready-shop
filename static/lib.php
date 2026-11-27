@@ -78,11 +78,11 @@ function ars_badge_svg( $domain, $score, $style = 'dark', $certified = true ) {
 	$tier = $certified && null !== $score ? ars_tier( $score ) : 'none';
 	list( $accent, $soft ) = $colors[ $tier ];
 	$dark   = 'light' !== $style;
-	$bg     = $dark ? '#0a0b0d' : '#ece9e2';
+	$bg     = $dark ? '#000000' : '#f7f4ee';
 	$stroke = $dark ? '#33363b' : '#c9c5bb';
-	$main   = $dark ? '#ece9e2' : '#0a0b0d';
+	$main   = $dark ? '#f7f4ee' : '#000000';
 	$sub    = $dark ? '#6f747b' : '#5c6066';
-	$on     = 'none' === $tier ? '#ffffff' : '#0a0b0d';
+	$on     = 'none' === $tier ? '#ffffff' : '#000000';
 	$small  = 'none' === $tier ? $soft : $on;
 	$short  = 'none' === $tier ? 'NOT VERIFIED' : ars_tier_short( $tier );
 	$dom    = preg_replace( '/[^a-z0-9.\-]/', '', substr( ars_normalize_domain( $domain ), 0, 24 ) );
