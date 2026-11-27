@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, FormEvent, ReactNode } from 'react';
-import { BASE, withBase } from './utils/base';
+import { absUrl, withBase } from './utils/base';
 import { motion, AnimatePresence } from 'motion/react';
 import { Bot, Search, ShieldAlert, ShieldCheck, Cpu, Code2, CheckCircle2, XCircle, ArrowRight, Zap, RefreshCw, Globe, LayoutTemplate, Award, Sparkles, ShoppingBag, Link2, Check } from 'lucide-react';
 import { runSimulatedAudit } from './data/auditConfig';
@@ -71,7 +71,7 @@ export default function App() {
       setResult(res);
       setAppState('results');
       // Shareable report URL — anyone opening it re-runs the same audit live.
-      window.history.replaceState(null, '', '/?audit=' + encodeURIComponent(normalizeDomain(formattedUrl)));
+      window.history.replaceState(null, '', withBase('/') + '?audit=' + encodeURIComponent(normalizeDomain(formattedUrl)));
     } catch (e) {
       console.error(e);
       setAppState('idle');
@@ -224,7 +224,7 @@ function ScanningView({ url, message }: { url: string, message: string, key?: st
 function ResultsView({ result, onCertify }: { result: AuditResult, onCertify: () => void, key?: string }) {
   const [shared, setShared] = useState(false);
   const shareReport = () => {
-    const link = `${window.location.origin}${BASE}/?audit=${encodeURIComponent(normalizeDomain(result.url))}`;
+    const link = `${absUrl('/')}?audit=${encodeURIComponent(normalizeDomain(result.url))}`;
     navigator.clipboard?.writeText(link);
     setShared(true);
     setTimeout(() => setShared(false), 2000);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { withBase } from './utils/base';
+import { STATIC, withBase } from './utils/base';
 import { Zap, Copy, Check, Loader2, ShieldCheck } from 'lucide-react';
 
 /**
@@ -16,6 +16,7 @@ export function BuyPro() {
     try {
       const res = await fetch(withBase('/api/license/issue?plan=pro&features=*&expires=never'));
       const data = await res.json();
+      if (!res.ok || !data.key) throw new Error('No license issued');
       setKey(data.key);
       setState('done');
     } catch { setState('idle'); }
@@ -34,10 +35,10 @@ export function BuyPro() {
             <span className="font-display text-3xl font-bold text-white">€149</span>
             <span className="text-sm text-[var(--muted)]">/ year · 1 store</span>
           </div>
-          <button onClick={buy} disabled={state === 'loading'} className="btn-grad w-full px-4 py-2.5 flex items-center justify-center gap-2">
-            {state === 'loading' ? <><Loader2 size={16} className="animate-spin" /> Processing…</> : <>Complete purchase (demo)</>}
+          <button onClick={buy} disabled={STATIC || state === 'loading'} className="btn-grad w-full px-4 py-2.5 flex items-center justify-center gap-2">
+            {state === 'loading' ? <><Loader2 size={16} className="animate-spin" /> Processing…</> : STATIC ? <>Available soon</> : <>Complete purchase (demo)</>}
           </button>
-          <p className="text-xs text-[var(--faint)] mt-2 text-center">Demo issues a real, valid license key. In production this runs after payment.</p>
+          {!STATIC && <p className="text-xs text-[var(--faint)] mt-2 text-center">Demo issues a real, valid license key. In production this runs after payment.</p>}
         </>
       ) : (
         <div>

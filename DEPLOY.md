@@ -39,6 +39,33 @@ Environment variables:
 
 ---
 
+## Path 0 — Ordinary PHP hosting, no Node (simplest)
+
+If you just want the website in a folder of an existing site (e.g. next to a
+WordPress install), build the **static + PHP** version. The analyzer, badge,
+verifier and plugin download run as plain PHP files — no Node process, no
+reverse proxy, no URL rewrites.
+
+```bash
+npm ci
+npm run build:static          # → site/ashop/  and  site/ashop.zip
+```
+
+Upload the `site/ashop/` folder into the web root (FTP / file manager) so it is
+reachable at `https://your-domain/ashop/`. Requirements: PHP 7.4+ with the
+cURL extension and outbound HTTP allowed. For a different folder name run
+`node scripts/build-static.mjs <name>`; paths are relative, so the folder works
+anywhere.
+
+Not included in this version: license issuing (`/api/license/*`) — that needs
+the private key and stays on the Node service. The "Buy Pro" demo button is
+disabled there.
+
+The PHP endpoints live in `static/` and mirror `server.ts` / `src/utils/badge.ts`;
+keep the scoring rubric in sync when changing either.
+
+---
+
 ## Serving from a subdirectory (e.g. `example.com/ashop`)
 
 Set `BASE_PATH` at **both build time and run time** — it mounts the frontend,

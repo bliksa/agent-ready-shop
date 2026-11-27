@@ -8,5 +8,6 @@ coverage/
 !.env.example
 secrets/
 release/
+site/
 # build artifact (rebuilt from source)
 agent-ready-shop-final.zip
