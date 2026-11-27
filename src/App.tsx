@@ -155,11 +155,12 @@ function Footer() {
 }
 
 const FLAP_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const FLAP_DIGITS = '0123456789';
 const FLAP_TICK_MS = 70;
 
 /** Split-flap board. On load every tile runs through the alphabet in order and
  *  drops onto its letter, left to right, like a departures board updating. */
-function Flaps({ text }: { text: string }) {
+function Flaps({ text, className = '' }: { text: string; className?: string }) {
   const still = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   const letters = text.replace(/ /g, '').length;
   const lastTick = 6 + (letters - 1) * 2;
@@ -173,15 +174,16 @@ function Flaps({ text }: { text: string }) {
 
   let index = 0;
   return (
-    <div className="flaps" role="img" aria-label={text}>
+    <div className={`flaps ${className}`} role="img" aria-label={text}>
       {text.split(' ').map((w, i) => (
         <React.Fragment key={i}>
           {i > 0 && <span className="flap-slash" aria-hidden="true">/</span>}
           <span className="flap-word" aria-hidden="true">
             {w.split('').map((ch, j) => {
               const remaining = Math.max(0, 6 + index++ * 2 - tick); // ticks until this tile lands
-              const at = FLAP_ALPHABET.indexOf(ch);
-              const shown = remaining && at >= 0 ? FLAP_ALPHABET[(at - remaining + 260) % 26] : ch;
+              const set = FLAP_DIGITS.includes(ch) ? FLAP_DIGITS : FLAP_ALPHABET; // a score runs through digits
+              const at = set.indexOf(ch);
+              const shown = remaining && at >= 0 ? set[(at - remaining + set.length * 20) % set.length] : ch;
               return (
                 <span className="flap" key={j}>
                   <span key={shown + remaining} className={`flap-ch ${remaining ? 'is-flipping' : still ? '' : 'is-landed'}`}>{shown}</span>
@@ -328,9 +330,9 @@ function ResultsView({ result, onCertify }: { result: AuditResult; onCertify: ()
       <section className="grid grid-cols-1 lg:grid-cols-[auto_minmax(0,1fr)] gap-10 lg:gap-16 pt-14 lg:pt-16 items-center">
         <div className="detect w-full sm:w-[340px] px-6 pt-5 pb-6">
           <DetectLabel name={t.results.scoreLabel} />
-          <div className="flex items-baseline gap-3">
-            <span className="num" style={{ fontSize: 'clamp(132px, 30vw, 200px)', fontWeight: 900, lineHeight: 0.86 }}>{score}</span>
-            <span className="label whitespace-nowrap">/ 100</span>
+          <div className="flex items-end gap-3 mt-2">
+            <Flaps text={String(score)} className="flaps-score" />
+            <span className="label whitespace-nowrap pb-1">/ 100</span>
           </div>
           <Dashes total={20} on={Math.round(score / 5)} className="dashes-fill dashes-tight mt-5" />
         </div>

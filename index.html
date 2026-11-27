@@ -17,7 +17,11 @@
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="%VITE_SITE_URL%/og.png" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <!-- The host caches icons for a year: raise ?v= whenever they change (see scripts/make-favicons.mjs). -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg?v=4" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=4" />
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png?v=4" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800;900&family=IBM+Plex+Mono:wght@500&display=swap" />
