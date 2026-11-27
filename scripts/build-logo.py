@@ -7,7 +7,7 @@ from fontTools.pens.transformPen import TransformPen
 from fontTools.pens.boundsPen import BoundsPen
 
 FONT = sys.argv[1]; OUT = sys.argv[2]
-P = dict(r=34.0, d=None, bar=(57.0, 75.0), cut=44.0, gap=7.0, ov=20.0, track=7.0, lead=13.0)
+P = dict(r=43.0, d=None, bar=(57.5, 75.5), cut=57.5, gap=7.5, ov=22.0, track=8.0, lead=17.0)
 P.update(json.loads(sys.argv[3]) if len(sys.argv) > 3 else {})
 
 font = TTFont(FONT); gs = font.getGlyphSet(); cmap = font.getBestCmap()

@@ -33,8 +33,8 @@ export const ratio = (score: number, max: number): string => (max > 0 ? score / 
 export function Logo({ className = '' }: { className?: string }) {
   return (
     <svg className={`logo ${className}`} viewBox={`0 ${-LOGO.over} ${LOGO.width} ${100 + LOGO.over}`} role="img" aria-label="A/SHOP">
-      <path d={LOGO.a} fill="currentColor" />
-      <path d={LOGO.check} fill="var(--clay)" />
+      {LOGO.a.map(d => <path key={d} d={d} fill="currentColor" />)}
+      {LOGO.check.map(d => <path key={d} d={d} fill="var(--clay)" />)}
       <path d={LOGO.word} fill="currentColor" />
     </svg>
   );
