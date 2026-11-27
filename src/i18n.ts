@@ -9,7 +9,7 @@ const en = {
   nav: { directory: 'Directory', plugin: 'Plugin demo', newAudit: 'New audit', language: 'Language', home: 'Agent Ready Shop — home' },
   common: { copy: 'Copy', copied: 'Copied', back: 'Back', backToAudit: 'Back to audit', getPlugin: 'Get the plugin — free', points: 'pts' },
   hero: {
-    title: 'Can AI agents buy from your store?',
+    title: 'Can bots buy from your store?',
     leadA: 'AI shopping agents don’t click through your site — they read its files, feeds and APIs. Enter your store to see what they can ',
     leadHi: 'read, price and buy',
     leadB: '.',
