@@ -19,6 +19,8 @@ export interface CheckCopy {
   name: string;
   /** Short machine-style label used in annotations and tables. */
   short: string;
+  /** The thing itself as a noun phrase, for the one-line summary of a result ("Missing: …"). */
+  thing: string;
   description: string;
   /** Plain-language consequence when the check fails. */
   flaw: string;
@@ -32,6 +34,7 @@ const CHECK_COPY: Record<Lang, Record<CheckId, CheckCopy>> = {
     robots: {
       name: 'AI crawler policy',
       short: 'robots.txt',
+      thing: 'a clear AI-crawler policy',
       description: 'Whether robots.txt lets shopping and answer agents fetch your store.',
       flaw: 'agents may be blocked or silently ignored',
       howToFix: 'Set an explicit AI-crawler policy: let shopping and answer agents in, keep training-only bots out. The plugin writes and maintains these rules for you.',
@@ -39,6 +42,7 @@ const CHECK_COPY: Record<Lang, Record<CheckId, CheckCopy>> = {
     schema: {
       name: 'Product structured data',
       short: 'schema.org',
+      thing: 'product structured data',
       description: 'Product and Offer JSON-LD with price and availability — what agents parse to compare products.',
       flaw: 'agents can’t read your product details',
       howToFix: 'Output clean, complete Product JSON-LD (including returns and shipping) on every product page. The plugin generates it and removes duplicates from SEO plugins.',
@@ -46,6 +50,7 @@ const CHECK_COPY: Record<Lang, Record<CheckId, CheckCopy>> = {
     llms: {
       name: 'llms.txt manifest',
       short: 'llms.txt',
+      thing: 'an llms.txt file',
       description: 'A Markdown map at /llms.txt that tells language models what your store sells.',
       flaw: 'no context document for language models to cite',
       howToFix: 'Generate /llms.txt from your catalogue and policies and keep it in sync. The plugin builds it from your live store — no manual upkeep.',
@@ -53,6 +58,7 @@ const CHECK_COPY: Record<Lang, Record<CheckId, CheckCopy>> = {
     feed: {
       name: 'Machine-readable product feed',
       short: 'feed',
+      thing: 'a product feed',
       description: 'A feed or sitemap agents can enumerate, so they find every product.',
       flaw: 'agents can’t enumerate your catalogue',
       howToFix: 'Publish a normalised JSON feed plus a Google/XML product feed, cached and refreshed whenever products change. The plugin serves both.',
@@ -60,6 +66,7 @@ const CHECK_COPY: Record<Lang, Record<CheckId, CheckCopy>> = {
     api: {
       name: 'Structured product API',
       short: 'api',
+      thing: 'a product API',
       description: 'An API agents call for live price and stock instead of scraping pages.',
       flaw: 'agents must scrape HTML — slow and brittle',
       howToFix: 'Expose normalised products, a manifest and an OpenAPI description at a discoverable path. The plugin adds them at /wp-json/agent-shop/v1 and /.well-known/agent-shop.json.',
@@ -67,6 +74,7 @@ const CHECK_COPY: Record<Lang, Record<CheckId, CheckCopy>> = {
     agent: {
       name: 'Agent-commerce layer',
       short: 'agent layer',
+      thing: 'a way for agents to check out',
       description: 'A commerce manifest, ACP or MCP endpoint agents can use to place an order.',
       flaw: 'agents have no supported way to complete a purchase',
       howToFix: 'Publish a commerce manifest or ACP / MCP discovery document for your store. On WordPress, Agent Ready Shop adds the manifest and the agent commerce API, with agentic checkout on Pro.',

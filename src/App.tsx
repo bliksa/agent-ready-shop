@@ -298,7 +298,7 @@ function UnreadView({ result, onReset }: { result: AuditResult; onReset: () => v
 }
 
 function ResultsView({ result, onCertify }: { result: AuditResult; onCertify: () => void }) {
-  const { t } = useT();
+  const { t, lang } = useT();
   const [shared, setShared] = useState(false);
   const domain = normalizeDomain(result.url);
   const shareReport = () => {
@@ -308,7 +308,22 @@ function ResultsView({ result, onCertify }: { result: AuditResult; onCertify: ()
     setTimeout(() => setShared(false), 2000);
   };
   const score = result.totalScore;
-  const level = score >= 85 ? 'gold' : score >= 60 ? 'blue' : 'critical';
+  // "Invisible" is only true of a store that scored nothing at all.
+  const level = score >= 85 ? 'gold' : score >= 60 ? 'blue' : score > 0 ? 'critical' : 'none';
+  // Under the headline, name the checks: what is missing, what is half done, what already works.
+  const things = (list: AuditCheck[]) => {
+    const names = list.map(c => checkCopy(lang, c.id).thing);
+    return names.length > 1 ? names.slice(0, -1).join(', ') + t.results.summary.and + names[names.length - 1] : names[0];
+  };
+  const byLoss = [...result.checks].sort((a, b) => (b.maxScore - b.score) - (a.maxScore - a.score));
+  const missing = byLoss.filter(c => c.score === 0);
+  const partial = byLoss.filter(c => c.score > 0 && c.score < c.maxScore);
+  const working = result.checks.filter(c => c.score >= c.maxScore);
+  const summary = level === 'gold' ? t.results.sublineGold : [
+    missing.length ? t.results.summary.missing + things(missing) + '.' : '',
+    partial.length ? t.results.summary.partial + things(partial) + '.' : '',
+    working.length ? t.results.summary.working + things(working) + '.' : '',
+  ].filter(Boolean).join(' ');
 
   return (
     <div className="view">
@@ -338,7 +353,7 @@ function ResultsView({ result, onCertify }: { result: AuditResult; onCertify: ()
         </div>
         <div className="min-w-0">
           <h1 className="display display-lg mb-5">{t.results.headline[level]}</h1>
-          <p className="lead max-w-[640px] mb-7" style={{ color: 'var(--ink2)' }}>{t.results.subline[level]}</p>
+          <p className="lead max-w-[640px] mb-7" style={{ color: 'var(--ink2)' }}>{summary}</p>
           <div className="flex flex-wrap items-center gap-2">
             <a href={withBase('/api/download-plugin')} className="btn btn-primary">{t.common.getPlugin}</a>
             <button type="button" onClick={onCertify} className="btn">{level === 'gold' ? t.results.viewBadge : t.results.previewBadge}</button>

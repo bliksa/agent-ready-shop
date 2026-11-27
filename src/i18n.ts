@@ -55,11 +55,14 @@ const en = {
     pluginActive: 'Plugin active',
     compatible: 'Plugin compatible',
     scoreLabel: 'score',
-    headline: { gold: 'Your store is agent ready', blue: 'Partially agent-ready', critical: 'Your store is invisible to AI' },
-    subline: {
-      gold: 'Agents can read your catalogue and transact. Claim your certificate and show the trust badge.',
-      blue: 'Agents can read your store, but buying is not fully deterministic yet. Close the gaps below to get certified.',
-      critical: 'Autonomous agents cannot reliably find your store or complete a purchase. Here is exactly what is missing.',
+    // The headline only says how far along the store is; the line under it names what is wrong.
+    headline: { gold: 'Your store is agent ready', blue: 'Partially agent-ready', critical: 'Not agent-ready yet', none: 'Invisible to AI agents' },
+    sublineGold: 'Agents can read your catalogue and transact. Claim your certificate and show the trust badge.',
+    summary: {
+      missing: 'Missing: ',
+      partial: 'Only partly there: ',
+      working: 'Working: ',
+      and: ' and ',
     },
     viewBadge: 'View your badge',
     previewBadge: 'Preview the badge',
