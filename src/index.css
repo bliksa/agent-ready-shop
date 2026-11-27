@@ -87,11 +87,10 @@ input, select, textarea { color-scheme: dark; }
 /* ---------- header ---------- */
 .topbar { position: sticky; top: 0; z-index: 50; background: linear-gradient(180deg, #30343a, #1a1c20); border-bottom: 1px solid var(--chrome-edge); }
 .topbar-row { height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.wordmark { display: inline-flex; align-items: baseline; gap: 12px; background: none; border: 0; padding: 0; cursor: pointer; position: relative; color: var(--ink); white-space: nowrap; }
-/* A/SHOP: the A is a mark whose left leg is cut free (see Mark in ui.tsx), followed by the clay slash. */
-.slash { display: inline-block; height: 0.92em; width: auto; margin: 0 0.16em 0 -0.04em; vertical-align: -0.1em; }
-.mark { display: inline-block; height: 0.74em; width: auto; margin-right: 0.14em; vertical-align: baseline; color: var(--ink); }
-.wordmark-name { font-family: var(--sans); font-weight: 700; font-size: 17px; letter-spacing: 0.12em; text-transform: uppercase; }
+.wordmark { display: inline-flex; align-items: flex-end; gap: 12px; background: none; border: 0; padding: 0; cursor: pointer; position: relative; color: var(--ink); white-space: nowrap; }
+/* The logo is drawn 22% taller than its cap height (the check overshoots), so 22px gives 18px letters. */
+.logo { display: block; height: 22px; width: auto; color: var(--ink); }
+.logo-sm { display: inline-block; height: 14px; vertical-align: -1px; }
 .wordmark-tld { font-family: var(--mono); font-weight: 500; font-size: 10.5px; letter-spacing: 0.14em; color: var(--ink3); text-transform: uppercase; }
 .nav { display: flex; align-items: center; gap: 26px; }
 .nav-link { font-family: var(--mono); font-weight: 500; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink2); background: none; border: 0; padding: 6px 0; cursor: pointer; white-space: nowrap; text-decoration: none; }
