@@ -84,20 +84,16 @@ input, select, textarea { color-scheme: dark; }
 /* ---------- header ---------- */
 .topbar { position: sticky; top: 0; z-index: 50; background: rgba(10, 11, 13, 0.94); border-bottom: 1px solid var(--line2); }
 .topbar-row { height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.wordmark { display: inline-flex; align-items: baseline; gap: 10px; background: none; border: 0; padding: 0 0 0 14px; cursor: pointer; position: relative; color: var(--ink); white-space: nowrap; }
-.wordmark::before { content: ""; position: absolute; left: 0; top: 50%; width: 3px; height: 15px; margin-top: -7.5px; background: var(--clay); }
-.wordmark-name { font-family: var(--sans); font-weight: 700; font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase; }
+.wordmark { display: inline-flex; align-items: baseline; gap: 12px; background: none; border: 0; padding: 0; cursor: pointer; position: relative; color: var(--ink); white-space: nowrap; }
+/* A/SHOP: the clay slash is the mark — a URL path separator, "agent / shop". */
+.wordmark-name i { font-style: normal; color: var(--clay); margin: 0 0.04em 0 -0.08em; }
+.wordmark-name { font-family: var(--sans); font-weight: 700; font-size: 17px; letter-spacing: 0.12em; text-transform: uppercase; }
 .wordmark-tld { font-family: var(--mono); font-weight: 500; font-size: 10.5px; letter-spacing: 0.14em; color: var(--ink3); text-transform: uppercase; }
 .nav { display: flex; align-items: center; gap: 26px; }
 .nav-link { font-family: var(--mono); font-weight: 500; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink2); background: none; border: 0; padding: 6px 0; cursor: pointer; white-space: nowrap; text-decoration: none; }
 .nav-link:hover { color: var(--ink); }
 .subnav { border-top: 1px solid var(--line); display: flex; gap: 22px; overflow-x: auto; height: 40px; align-items: center; scrollbar-width: none; }
 .subnav::-webkit-scrollbar { display: none; }
-.lang { display: inline-flex; border: 1px solid var(--line2); }
-.lang button { font-family: var(--mono); font-weight: 500; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3); background: none; border: 0; border-left: 1px solid var(--line); padding: 5px 8px; cursor: pointer; line-height: 1.4; }
-.lang button:first-child { border-left: 0; }
-.lang button:hover { color: var(--ink); }
-.lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 
 /* ---------- controls ---------- */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 42px; padding: 10px 18px; font-family: var(--mono); font-weight: 500; font-size: 11px; line-height: 1.35; letter-spacing: 0.14em; text-transform: uppercase; text-align: center; text-decoration: none; color: var(--ink); background: transparent; border: 1px solid var(--line2); border-radius: 0; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s; }

@@ -13,7 +13,7 @@ import { Pricing } from './Pricing';
 import { Directory } from './Directory';
 import { PluginShots } from './PluginShots';
 import { normalizeDomain } from './utils/badge';
-import { useT, LANGS } from './i18n';
+import { useT } from './i18n';
 import { SectionHead, Dashes, DetectLabel, ratio } from './ui';
 
 // Internal vendor tool: only the Node build ships it. The literal env check lets
@@ -109,17 +109,6 @@ export default function App() {
   );
 }
 
-function LangSwitch() {
-  const { lang, setLang, t } = useT();
-  return (
-    <div className="lang" role="group" aria-label={t.nav.language}>
-      {LANGS.map(l => (
-        <button key={l} type="button" lang={l} aria-pressed={l === lang} onClick={() => setLang(l)}>{l}</button>
-      ))}
-    </div>
-  );
-}
-
 function TopBar({ onHome, onPlugin, onDirectory, onNewAudit }: { onHome: () => void; onPlugin: () => void; onDirectory: () => void; onNewAudit?: () => void }) {
   const { t } = useT();
   const links = (
@@ -134,12 +123,11 @@ function TopBar({ onHome, onPlugin, onDirectory, onNewAudit }: { onHome: () => v
       <div className="wrap">
         <div className="topbar-row">
           <button type="button" className="wordmark" onClick={onHome} aria-label={t.nav.home}>
-            <span className="wordmark-name">Agent Ready</span>
-            <span className="wordmark-tld">.Shop</span>
+            <span className="wordmark-name">A<i>/</i>Shop</span>
+            <span className="wordmark-tld">Agent Ready</span>
           </button>
           <div className="nav">
             <nav className="hidden md:flex items-center gap-[26px]">{links}</nav>
-            <LangSwitch />
           </div>
         </div>
         <nav className="subnav md:hidden">{links}</nav>
@@ -153,7 +141,7 @@ function Footer() {
   return (
     <footer className="border-t border-line">
       <div className="wrap py-7 flex flex-wrap items-center justify-between gap-4">
-        <span className="label label-dim">Agent Ready Shop · AIO audit</span>
+        <span className="label label-dim"><span style={{ color: 'var(--ink)' }}>A<span style={{ color: 'var(--clay)' }}>/</span>Shop</span> · Agent Ready Shop · AIO audit</span>
         <a href={withBase('/api/download-plugin')} className="link">{t.common.getPlugin}</a>
       </div>
     </footer>

@@ -85,7 +85,7 @@ function ars_badge_svg( $domain, $score, $style = 'dark', $certified = true ) {
 	$on     = 'none' === $tier ? '#ffffff' : '#0a0b0d';
 	$small  = 'none' === $tier ? $soft : $on;
 	$short  = 'none' === $tier ? 'NOT VERIFIED' : ars_tier_short( $tier );
-	$dom    = preg_replace( '/[^a-z0-9.\-]/', '', substr( ars_normalize_domain( $domain ), 0, 26 ) );
+	$dom    = preg_replace( '/[^a-z0-9.\-]/', '', substr( ars_normalize_domain( $domain ), 0, 24 ) );
 	$num    = null === $score ? '–' : (string) (int) $score;
 	$mono   = "'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace";
 	$sans   = "'Helvetica Neue', Helvetica, Arial, sans-serif";
@@ -93,10 +93,10 @@ function ars_badge_svg( $domain, $score, $style = 'dark', $certified = true ) {
 	return <<<SVG
 <svg width="240" height="56" viewBox="0 0 240 56" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agent Ready {$short}">
   <rect x="0.5" y="0.5" width="239" height="55" fill="{$bg}" stroke="{$stroke}"/>
-  <rect x="14" y="13" width="3" height="30" fill="{$accent}"/>
-  <text x="26" y="25" font-family="{$sans}" font-size="13" font-weight="700" fill="{$main}" letter-spacing="1.6">AGENT READY</text>
-  <text x="26" y="38" font-family="{$mono}" font-size="8.5" font-weight="500" fill="{$accent}" letter-spacing="1.2">{$short}</text>
-  <text x="26" y="49" font-family="{$mono}" font-size="7.5" fill="{$sub}">{$dom}</text>
+  <text x="12" y="35" font-family="{$sans}" font-size="22" font-weight="700" fill="{$main}">A<tspan fill="{$accent}">/</tspan></text>
+  <text x="46" y="25" font-family="{$sans}" font-size="12.5" font-weight="700" fill="{$main}" letter-spacing="1.4">AGENT READY</text>
+  <text x="46" y="38" font-family="{$mono}" font-size="8.5" font-weight="500" fill="{$accent}" letter-spacing="1.2">{$short}</text>
+  <text x="46" y="49" font-family="{$mono}" font-size="7.5" fill="{$sub}">{$dom}</text>
   <rect x="184" y="13" width="42" height="30" fill="{$accent}"/>
   <text x="205" y="31" font-family="{$sans}" font-size="16" font-weight="700" fill="{$on}" text-anchor="middle">{$num}</text>
   <text x="205" y="39.5" font-family="{$mono}" font-size="5.5" fill="{$small}" text-anchor="middle" letter-spacing="0.6">/ 100 AIO</text>
