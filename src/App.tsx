@@ -96,7 +96,9 @@ export default function App() {
   } else if (appState === 'scanning') {
     body = <ScanningView url={url} step={step} />;
   } else if (appState === 'results' && result) {
-    body = <ResultsView result={result} onCertify={() => go('certificate')} />;
+    body = result.read
+      ? <ResultsView result={result} onCertify={() => go('certificate')} />
+      : <UnreadView result={result} onReset={reset} />;
   } else {
     body = <IdleView url={url} setUrl={setUrl} onStart={startAudit} error={error} />;
   }
@@ -275,6 +277,20 @@ function ScanningView({ url, step }: { url: string; step: number }) {
       </div>
       <Dashes total={AUDIT_STEPS} on={step} running={step} className="dashes-fill mb-4" />
       <p className="label min-h-[2.4em]" style={{ color: 'var(--ink)' }} role="status" aria-live="polite">{t.scan.steps[step] || t.scan.steps[0]}</p>
+    </div>
+  );
+}
+
+/** The storefront could not be read: say so plainly instead of showing a score that measures nothing. */
+function UnreadView({ result, onReset }: { result: AuditResult; onReset: () => void }) {
+  const { t } = useT();
+  const copy = result.botBlocked ? t.results.unread.blocked : t.results.unread.unreachable;
+  return (
+    <div className="view pt-12 md:pt-20 max-w-[820px]">
+      <p className="label mb-4"><span className="label-clay">{t.results.unread.label}</span>&nbsp;&nbsp;<span className="code normal-case tracking-normal">{normalizeDomain(result.url)}</span></p>
+      <h1 className="display display-lg mb-6">{copy.title}</h1>
+      <p className="lead mb-8" style={{ color: 'var(--ink2)' }}>{copy.body}</p>
+      <button type="button" onClick={onReset} className="btn btn-primary">{t.nav.newAudit}</button>
     </div>
   );
 }

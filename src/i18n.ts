@@ -65,6 +65,17 @@ const en = {
     previewBadge: 'Preview the badge',
     share: 'Share report',
     linkCopied: 'Link copied',
+    unread: {
+      blocked: {
+        title: 'This store turned our auditor away',
+        body: 'It answered with a bot challenge or an access-denied page, so nothing could be read and there is no score. Shopping agents that identify themselves honestly meet the same wall. Allow verified agents in your firewall or CDN, then run the audit again.',
+      },
+      unreachable: {
+        title: 'We couldn’t read this store',
+        body: 'The address did not answer with a store page — it may be down, mistyped, or it rejected the request — so there is no score. Check the address and try again.',
+      },
+      label: 'Not audited',
+    },
     blockedTitle: 'Your edge firewall challenges AI agents',
     blockedBody: 'Our auditor was blocked or served a bot challenge — real shopping agents get the same treatment. Even a perfect agent layer is useless behind a wall: allow verified AI agents (GPTBot, ClaudeBot, PerplexityBot) in your WAF/CDN, then run this audit again.',
     gapsTitle: (n: number) => (n === 0 ? 'No gaps found' : 'What agents can’t do yet'),

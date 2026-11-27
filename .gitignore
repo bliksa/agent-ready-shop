@@ -11,3 +11,5 @@ release/
 site/
 # build artifact (rebuilt from source)
 agent-ready-shop-final.zip
+# audit cache written by local runs of the PHP endpoints
+static/data/

@@ -136,6 +136,7 @@ export async function runAudit(url: string, onProgress?: (step: number) => void)
       isWooCommerce: !!data.isWooCommerce,
       pluginDetected: !!data.pluginDetected,
       botBlocked: !!data.blocked,
+      read: data.read !== false && !data.blocked,
       productPage: typeof data.productPage === 'string' ? data.productPage : null,
       totalScore: checks.reduce((acc, c) => acc + c.score, 0),
       checks,

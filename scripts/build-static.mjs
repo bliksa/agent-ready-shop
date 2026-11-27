@@ -25,7 +25,8 @@ rmSync('site', { recursive: true, force: true });
 execSync(`npx vite build --base=./ --outDir ${out} --emptyOutDir`, { stdio: 'inherit', env: { ...process.env, VITE_STATIC: '1', VITE_SITE_URL: siteUrl } });
 
 // 2. PHP endpoints (audit, badge, verify).
-for (const f of readdirSync('static')) copyFileSync(join('static', f), join(out, f));
+// Files only: a local test run of the PHP leaves its cache in static/data/, which is not part of the site.
+for (const f of readdirSync('static', { withFileTypes: true })) if (f.isFile()) copyFileSync(join('static', f.name), join(out, f.name));
 
 // 3. Plugin download — the public zip (no vendor license tools).
 function addDir(zip, dir, base, skip = () => false, transform = (_rel, buf) => buf) {

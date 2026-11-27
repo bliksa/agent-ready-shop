@@ -13,7 +13,8 @@ const APP_VERSION = '1.0.0';
 const fetchOptions = {
   headers: {
     'User-Agent': 'Mozilla/5.0 (compatible; AgentReadyShop/1.0; +https://agentreadyshop.com/bot)',
-    'Accept': 'text/html,application/json,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    // A plain page request: listing application/json made some stores answer the storefront URL with a JSON error.
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
   },
 };
 
@@ -166,6 +167,7 @@ interface AuditData {
   isWooCommerce: boolean;
   pluginDetected: boolean;
   blocked: boolean; // edge WAF / anti-bot challenged our auditor
+  read: boolean; // false when the storefront itself could not be read; the scores then say nothing about the store
   productPage: string | null; // deep product URL we audited (if any)
   scores: Record<string, { score: number; pass: boolean }>;
   total: number;
@@ -336,7 +338,7 @@ async function runAudit(targetUrl: string, clientIp = 'local'): Promise<AuditDat
   }
 
   const total = Object.values(s).reduce((a, x) => a + x.score, 0);
-  const data: AuditData = { origin, platform, isWooCommerce, pluginDetected, blocked, productPage, scores: s, total, t: Date.now() };
+  const data: AuditData = { origin, platform, isWooCommerce, pluginDetected, blocked, read: !!home && home.ok && !blocked, productPage, scores: s, total, t: Date.now() };
   audits.set(normalizeDomain(requested), data);
   audits.set(normalizeDomain(origin), data); // both spellings hit the same entry
   return data;
@@ -372,7 +374,7 @@ async function startServer() {
     try {
       const a = await runAudit(targetUrl, req.ip || 'unknown');
       res.setHeader('Cache-Control', 'no-store');
-      res.json({ platform: a.platform, isWooCommerce: a.isWooCommerce, pluginDetected: a.pluginDetected, blocked: a.blocked, productPage: a.productPage, scores: a.scores });
+      res.json({ platform: a.platform, isWooCommerce: a.isWooCommerce, pluginDetected: a.pluginDetected, blocked: a.blocked, read: a.read, productPage: a.productPage, scores: a.scores });
     } catch (e) {
       if (e instanceof BadTarget) return res.status(400).json({ error: e.message });
       if (e instanceof RateLimited) return res.status(429).setHeader('Retry-After', '300').json({ error: e.message });

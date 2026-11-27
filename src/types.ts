@@ -18,6 +18,8 @@ export interface AuditResult {
   isWooCommerce: boolean;
   pluginDetected: boolean;
   botBlocked: boolean;
+  /** False when the storefront could not be read at all; there is then no score to show. */
+  read: boolean;
   productPage: string | null;
   totalScore: number;
   checks: AuditCheck[];

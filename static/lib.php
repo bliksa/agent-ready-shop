@@ -265,7 +265,9 @@ function ars_curl( $url, $timeout, array $target ) {
 		CURLOPT_CONNECTTIMEOUT  => min( 6, $timeout ),
 		CURLOPT_USERAGENT       => ARS_UA,
 		CURLOPT_ENCODING        => '',
-		CURLOPT_HTTPHEADER      => array( 'Accept: text/html,application/json,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' ),
+		// A plain page request. Listing application/json here made some stores answer the
+		// storefront URL with a JSON error instead of the page; JSON endpoints still match */*.
+		CURLOPT_HTTPHEADER      => array( 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' ),
 		CURLOPT_PROTOCOLS       => CURLPROTO_HTTP | CURLPROTO_HTTPS,
 		CURLOPT_RESOLVE         => array( $host . ':' . $port . ':' . ( false !== strpos( $ip, ':' ) ? '[' . $ip . ']' : $ip ) ),
 		CURLOPT_NOPROGRESS      => false,
@@ -729,6 +731,9 @@ function ars_run_audit( $target ) {
 		'isWooCommerce'  => $is_woo,
 		'pluginDetected' => $plugin_detected,
 		'blocked'        => $blocked,
+		// False when the storefront itself could not be read (bot challenge, error page,
+		// no answer). The scores then say nothing about the store and must not be shown.
+		'read'           => (bool) ( $home && $home['ok'] && ! $blocked ),
 		'productPage'    => $product_page,
 		'scores'         => $s,
 		'total'          => $total,
