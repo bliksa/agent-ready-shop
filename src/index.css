@@ -161,8 +161,8 @@ input, select, textarea { color-scheme: dark; }
 /* On wide screens the still is pushed right so her face clears the copy; the scrim hides its left edge. */
 @media (min-width: 901px) { .hero-bg { background-position: calc(50% + 15vw) 28%; } }
 @media (max-width: 900px) { .hero-bg::after { background: linear-gradient(180deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.9)); } }
-.hero-credit { position: absolute; right: 0; bottom: 14px; text-decoration: none; }
-.hero-credit:hover { color: var(--ink); }
+.footer-credit { margin-left: 14px; color: inherit; opacity: 0.55; text-decoration: none; }
+.footer-credit:hover { opacity: 1; }
 
 /* ---------- chrome band: a full-width grey section between the black ones ---------- */
 .chrome-band { position: relative; isolation: isolate; margin-top: clamp(56px, 8vw, 104px); padding-top: clamp(36px, 5vw, 64px); padding-bottom: clamp(48px, 7vw, 88px); }

@@ -16,7 +16,7 @@ const en = {
     urlLabel: 'Store address',
     placeholder: 'your-store.com',
     start: 'Start audit',
-    credit: 'Claudia by anabology · claudia.gallery',
+    credit: 'Image: Claudia by anabology',
   },
   errors: {
     title: 'Audit failed',

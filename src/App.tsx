@@ -142,7 +142,10 @@ function Footer() {
   return (
     <footer className="border-t border-line">
       <div className="wrap py-7 flex flex-wrap items-center justify-between gap-4">
-        <span className="label label-dim"><Logo className="logo-sm" /> · Agent Ready Shop</span>
+        <span className="label label-dim">
+          <Logo className="logo-sm" /> · Agent Ready Shop
+          <a className="footer-credit" href="https://claudia.gallery/" target="_blank" rel="noopener">{t.hero.credit}</a>
+        </span>
         <a href={withBase('/api/download-plugin')} className="link">{t.common.getPlugin}</a>
       </div>
     </footer>
@@ -221,7 +224,6 @@ function IdleView({ url, setUrl, onStart, error }: { url: string; setUrl: (s: st
             )}
           </form>
         </div>
-        <a className="hero-credit label label-dim" href="https://claudia.gallery/" target="_blank" rel="noopener">{t.hero.credit}</a>
       </section>
 
       {/* The rubric: six checks, in the order an agent needs them */}
