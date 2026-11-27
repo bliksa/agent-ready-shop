@@ -40,7 +40,6 @@ function ScreenDashboard() {
       </div>
       <div style={card}>
         <div style={cardTitle}>AI traffic · 30 days</div>
-        <div style={{ fontSize: 11, color: '#1d2327', marginBottom: 6 }}><b style={{ fontSize: 15 }}>5,834</b> hits · <span style={{ color: '#007017' }}>5,210 verified</span></div>
         {bars.map(([n, w]) => (
           <div key={n} style={{ marginBottom: 5 }}>
             <div style={{ fontSize: 9.5, color: '#50575e', fontFamily: 'monospace' }}>{n}</div>

@@ -20,6 +20,9 @@
   --ink3: #6f747b;
   --clay: #d97757;
   --clay2: #f0936f;
+  /* chrome: the grey that breaks up the black — bands, tiles, the top bar */
+  --chrome: linear-gradient(180deg, #41454b 0%, #262a2f 24%, #30343a 58%, #1b1d21 100%);
+  --chrome-edge: rgba(236, 233, 226, 0.34);
   /* subdued semantic pair — used for pass / fail only */
   --pass: #8fad8a;
   --fail: #cf7b6e;
@@ -82,11 +85,11 @@ input, select, textarea { color-scheme: dark; }
 .code { font-family: var(--mono); font-size: 0.86em; color: var(--ink); overflow-wrap: anywhere; }
 
 /* ---------- header ---------- */
-.topbar { position: sticky; top: 0; z-index: 50; background: rgba(10, 11, 13, 0.94); border-bottom: 1px solid var(--line2); }
+.topbar { position: sticky; top: 0; z-index: 50; background: linear-gradient(180deg, #30343a, #1a1c20); border-bottom: 1px solid var(--chrome-edge); }
 .topbar-row { height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .wordmark { display: inline-flex; align-items: baseline; gap: 12px; background: none; border: 0; padding: 0; cursor: pointer; position: relative; color: var(--ink); white-space: nowrap; }
-/* A/SHOP: the clay slash is the mark — a URL path separator, "agent / shop". */
-.wordmark-name i { font-style: normal; color: var(--clay); margin: 0 0.04em 0 -0.08em; }
+/* The mark is an A whose left leg is a clay slash (see Mark in ui.tsx); it sits on the baseline at cap height. */
+.mark { display: inline-block; height: 0.74em; width: auto; margin-right: 0.14em; vertical-align: baseline; color: var(--ink); }
 .wordmark-name { font-family: var(--sans); font-weight: 700; font-size: 17px; letter-spacing: 0.12em; text-transform: uppercase; }
 .wordmark-tld { font-family: var(--mono); font-weight: 500; font-size: 10.5px; letter-spacing: 0.14em; color: var(--ink3); text-transform: uppercase; }
 .nav { display: flex; align-items: center; gap: 26px; }
@@ -98,7 +101,7 @@ input, select, textarea { color-scheme: dark; }
 /* ---------- controls ---------- */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 42px; padding: 10px 18px; font-family: var(--mono); font-weight: 500; font-size: 11px; line-height: 1.35; letter-spacing: 0.14em; text-transform: uppercase; text-align: center; text-decoration: none; color: var(--ink); background: transparent; border: 1px solid var(--line2); border-radius: 0; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s; }
 .btn:hover { border-color: var(--ink); }
-.btn-primary { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.btn-primary { background: linear-gradient(180deg, #ffffff, #c3c6ca); border-color: var(--ink); color: var(--bg); }
 .btn-primary:hover { background: #fff; border-color: #fff; }
 .btn-sm { min-height: 32px; padding: 6px 12px; font-size: 10px; }
 .btn[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
@@ -113,7 +116,7 @@ input, select, textarea { color-scheme: dark; }
 .field-sm { min-height: 42px; font-size: 14px; padding: 8px 12px; }
 
 /* ---------- surfaces ---------- */
-.panel { background: var(--bg2); border: 1px solid var(--line); }
+.panel { background: linear-gradient(180deg, #1f2226, #121417); border: 1px solid var(--line2); }
 .panel-strong { border-color: var(--line2); }
 .inset { background: var(--bg3); border: 1px solid var(--line); }
 .tag { display: inline-flex; align-items: center; gap: 8px; padding: 4px 9px; border: 1px solid var(--line2); font-family: var(--mono); font-weight: 500; font-size: 10px; line-height: 1.4; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink2); white-space: nowrap; }
@@ -134,8 +137,8 @@ input, select, textarea { color-scheme: dark; }
 /* definition rows: mono key, prose value, hairline between */
 .rows { border-top: 1px solid var(--line); }
 .row { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 4px 12px; padding: 16px 0; border-bottom: 1px solid var(--line); }
-@media (min-width: 1024px) { .row { grid-template-columns: 34px minmax(0, 300px) minmax(0, 1fr) 84px; gap: 24px; align-items: baseline; } }
-.row-num { font-family: var(--mono); font-weight: 500; font-size: 10.5px; letter-spacing: 0.1em; color: var(--clay); padding-top: 3px; }
+@media (min-width: 1024px) { .row { grid-template-columns: 34px minmax(0, 300px) minmax(0, 1fr); gap: 24px; align-items: baseline; } }
+.row-num { font-family: var(--mono); font-weight: 500; font-size: 13px; color: var(--clay); padding-top: 1px; }
 .kv { display: grid; grid-template-columns: minmax(0, 132px) minmax(0, 1fr); gap: 14px; padding: 10px 0; border-top: 1px solid var(--line); align-items: baseline; }
 .kv:last-child { border-bottom: 1px solid var(--line); }
 
@@ -150,10 +153,28 @@ input, select, textarea { color-scheme: dark; }
   .cells-3 .cell:first-child, .cells-2 .cell:first-child { border-left: 0; }
 }
 
+/* ---------- hero: Claudia in chrome behind the pitch ---------- */
+.hero { position: relative; isolation: isolate; padding-block: clamp(40px, 6vw, 80px) clamp(48px, 7vw, 96px); min-height: min(78vh, 720px); display: flex; flex-direction: column; justify-content: center; }
+.hero-bg { position: absolute; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%); z-index: -1; background-size: cover; background-position: 72% 28%; border-bottom: 1px solid var(--chrome-edge); }
+/* The scrim keeps the copy readable: solid on the text side, clear over her face. */
+.hero-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10, 11, 13, 0.94) 0%, rgba(10, 11, 13, 0.82) 34%, rgba(10, 11, 13, 0.28) 62%, rgba(10, 11, 13, 0.08) 100%), linear-gradient(180deg, rgba(10, 11, 13, 0.5) 0%, transparent 22%, transparent 78%, rgba(10, 11, 13, 0.7) 100%); }
+@media (max-width: 900px) { .hero-bg::after { background: linear-gradient(180deg, rgba(10, 11, 13, 0.72), rgba(10, 11, 13, 0.9)); } }
+.hero-credit { position: absolute; right: 0; bottom: 14px; text-decoration: none; }
+.hero-credit:hover { color: var(--ink); }
+
+/* ---------- chrome band: a full-width grey section between the black ones ---------- */
+.chrome-band { position: relative; isolation: isolate; margin-top: clamp(56px, 8vw, 104px); padding-top: clamp(36px, 5vw, 64px); padding-bottom: clamp(48px, 7vw, 88px); }
+.chrome-band::before { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%); z-index: -1; background: linear-gradient(104deg, transparent 0 28%, rgba(255, 255, 255, 0.07) 41%, transparent 56%), var(--chrome); border-top: 1px solid var(--chrome-edge); border-bottom: 1px solid rgba(0, 0, 0, 0.7); }
+.chrome-band .sec-head { border-top: 0; padding-top: 0; }
+/* A band that ends the page runs down to the footer, with no black strip under it. */
+main > .view > .chrome-band:last-child { margin-bottom: -6rem; }
+.chrome-band .cells, .chrome-band .cell { border-color: rgba(236, 233, 226, 0.22); }
+.chrome-band .body, .chrome-band .small { color: #c6c9cd; }
+
 /* ---------- split-flap tiles (hero only) ---------- */
 .flaps { display: flex; flex-wrap: wrap; gap: clamp(6px, 0.7vw, 10px) clamp(16px, 2.4vw, 34px); }
 .flap-word { display: flex; gap: clamp(4px, 0.5vw, 7px); }
-.flap { position: relative; display: grid; place-items: center; width: clamp(50px, 6.1vw, 84px); height: clamp(68px, 8.4vw, 115px); background: #14161a; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(236, 233, 226, 0.05); font-family: var(--sans); font-weight: 700; font-size: clamp(42px, 5.4vw, 76px); line-height: 1; color: var(--ink); }
+.flap { position: relative; display: grid; place-items: center; width: clamp(50px, 6.1vw, 84px); height: clamp(68px, 8.4vw, 115px); background: linear-gradient(180deg, #4b5057 0%, #2b2f34 49%, #1c1f23 51%, #353a40 100%); border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(236, 233, 226, 0.16); font-family: var(--sans); font-weight: 700; font-size: clamp(42px, 5.4vw, 76px); line-height: 1; color: var(--ink); }
 .flap::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, 0.9); box-shadow: 0 1px 0 rgba(236, 233, 226, 0.05); }
 
 /* ---------- machine-vision annotation ---------- */

@@ -39,10 +39,10 @@ export function Certificate({ domain, score, eligible, onBack }: CertificateProp
       <section className="panel panel-strong mt-8">
         <div className="grid grid-cols-1 md:grid-cols-[auto_minmax(0,1fr)] gap-10 md:gap-14 p-6 pt-12 md:p-12 items-center">
           <div className="detect w-full md:w-[250px] px-5 pt-4 pb-5">
-            <DetectLabel name={c.scoreLabel} value={(cert.score / 100).toFixed(2)} />
+            <DetectLabel name={c.scoreLabel} />
             <div className="flex items-baseline gap-3">
               <span className="num" style={{ fontSize: 'clamp(104px, 24vw, 140px)', fontWeight: 900, lineHeight: 0.86 }}>{cert.score}</span>
-              <span className="label whitespace-nowrap">/ 100 AIO</span>
+              <span className="label whitespace-nowrap">/ 100</span>
             </div>
             <Dashes total={20} on={Math.round(cert.score / 5)} className="dashes-fill dashes-tight mt-4" />
           </div>

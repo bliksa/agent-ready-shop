@@ -47,7 +47,7 @@ export function Directory({ onBack }: { onBack: () => void }) {
 
       {/* Wild leaderboard — recorded audit data */}
       <section className="sec">
-        <SectionHead num="01" title={d.wildTitle} meta={d.wildEyebrow} />
+        <SectionHead title={d.wildTitle} />
         <p className="body max-w-[720px] mb-7">{d.wildSub}</p>
 
         <input value={q} onChange={e => setQ(e.target.value)} placeholder={d.filter} aria-label={d.filter} className="field field-sm max-w-[420px] mb-6" />
@@ -60,7 +60,7 @@ export function Directory({ onBack }: { onBack: () => void }) {
                 <th>{d.store}</th>
                 <th className="hidden sm:table-cell">{d.platform}</th>
                 <th className="hidden md:table-cell">{d.passing}</th>
-                <th className="text-right">AIO</th>
+                <th className="text-right">Score</th>
                 <th className="w-10" />
               </tr>
             </thead>
@@ -85,7 +85,6 @@ export function Directory({ onBack }: { onBack: () => void }) {
         </div>
         {list.length === 0 && <p className="small mt-8">{d.noMatch(q)}</p>}
 
-        <p className="label label-dim mt-5">{d.method}</p>
       </section>
     </div>
   );

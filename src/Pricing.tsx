@@ -28,10 +28,7 @@ export function Pricing({ onSelectPro }: { onSelectPro?: () => void }) {
 
         {/* Pro */}
         <div className="cell bg-bg3">
-          <div className="flex items-center justify-between gap-3 mb-6">
-            <span className="label label-clay">{p.pro}</span>
-            <span className="tag tag-solid">{p.recommended}</span>
-          </div>
+          <div className="mb-6"><span className="label label-clay">{p.pro}</span></div>
           <h3 className="display display-md mb-2">{p.proTitle}</h3>
           <p className="small mb-6">{p.proSub}</p>
           <div className="mb-6 flex items-baseline gap-2"><span className="num text-[64px]">€149</span><span className="label">{p.perYear}</span></div>
@@ -46,30 +43,6 @@ export function Pricing({ onSelectPro }: { onSelectPro?: () => void }) {
         </div>
       </div>
 
-      {/* Full comparison */}
-      <div className="panel overflow-x-auto">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>{p.capability}</th>
-              <th className="text-center w-[76px] sm:w-[150px]">{p.free}</th>
-              <th className="text-center w-[108px] sm:w-[240px]" style={{ color: 'var(--clay2)' }}>{p.pro}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {p.rows.map(r => (
-              <tr key={r.label} className={r.flagship ? 'bg-bg3' : undefined}>
-                <td style={{ color: 'var(--ink)' }}>
-                  {r.flagship && <span className="tag tag-clay mr-2 align-middle">{p.flagship}</span>}
-                  {r.label}
-                </td>
-                <td className="text-center"><Cell v={r.free} /></td>
-                <td className="text-center"><Cell v={r.pro} /></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 }
