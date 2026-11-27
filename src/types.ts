@@ -1,16 +1,15 @@
 export type Category = 'critical' | 'transactional' | 'semantic';
 export type PluginFixTier = 'free' | 'pro' | 'manual';
+export type CheckId = 'robots' | 'schema' | 'llms' | 'feed' | 'api' | 'agent';
 
+/** Structural part of a check. Its copy is localised — see checkCopy() in data/auditConfig. */
 export interface AuditCheck {
-  id: string;
-  name: string;
-  description: string;
+  id: CheckId;
   category: Category;
   maxScore: number;
   score: number;
   passed: boolean;
   pluginFix: PluginFixTier;
-  howToFix: string;
 }
 
 export interface AuditResult {

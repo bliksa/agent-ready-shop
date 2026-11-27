@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   ShoppingBag, FileText, Unlock, Database, Award, TrendingUp,
-  ArrowLeft, Settings, Download, Cpu, CheckCircle2, Lock, ExternalLink, Zap
+  Settings, Download, Cpu, CheckCircle2, Lock, ExternalLink, Zap
 } from 'lucide-react';
 import { downloadPlugin } from './utils/pluginGenerator';
 import { Certificate } from './Certificate';
@@ -58,14 +58,25 @@ export function PluginDashboard({ onExit }: PluginDashboardProps) {
   const set = <K extends keyof DashSettings>(k: K, v: DashSettings[K]) => setSettings(s => ({ ...s, [k]: v }));
 
   return (
-    <div className="flex h-screen bg-[#f0f0f1] text-[#2c3338] font-sans overflow-hidden text-[13px]">
+    <div className="flex flex-col h-screen bg-bg overflow-hidden">
+      {/* Site chrome around the mock — the WP-admin screen below keeps its own look */}
+      <header className="topbar flex-shrink-0" style={{ position: 'static' }}>
+        <div className="topbar-row px-4">
+          <button type="button" className="wordmark" onClick={onExit} aria-label="Agent Ready Shop — home">
+            <span className="wordmark-name">Agent Ready</span>
+            <span className="wordmark-tld">.Shop</span>
+          </button>
+          <div className="nav">
+            <span className="label label-dim hidden sm:inline">Plugin demo · WP admin mock</span>
+            <button type="button" onClick={onExit} className="btn btn-sm">← Back to analyzer</button>
+          </div>
+        </div>
+      </header>
+    <div className="flex flex-1 min-h-0 bg-[#f0f0f1] text-[#2c3338] font-sans overflow-hidden text-[13px]">
 
       {/* WP Admin Sidebar */}
       <div className="w-[160px] md:w-[200px] bg-[#1d2327] text-white flex flex-col flex-shrink-0 z-20 overflow-y-auto">
-        <div onClick={onExit} className="p-3 bg-[#135e96] hover:bg-[#2271b1] cursor-pointer flex items-center gap-2 text-sm font-medium transition-colors">
-          <ArrowLeft size={16} /> Back to Analyzer
-        </div>
-        <div className="py-2 mt-2">
+        <div className="py-2">
           <div className="px-3 py-2 text-[11px] uppercase text-[#a7aaad] font-semibold tracking-wider">Overview</div>
           <MenuLink id="dashboard" icon={<ShoppingBag size={16} />} label="Dashboard" active={activeTab} set={setActiveTab} />
           <MenuLink id="certificate" icon={<Award size={16} />} label="Certificate & Badge" active={activeTab} set={setActiveTab} />
@@ -98,10 +109,12 @@ export function PluginDashboard({ onExit }: PluginDashboardProps) {
 
         <div className="max-w-[1000px]">
           {activeTab === 'dashboard' && <TabDashboard isPro={isPro} onUnlock={() => setActiveTab('settings')} />}
-          {activeTab === 'certificate' && <Certificate domain={DEMO_DOMAIN} score={isPro ? 100 : 85} eligible={isPro} />}
+          {activeTab === 'certificate' && (
+            <div className="bg-bg px-4 pb-6 md:px-6"><Certificate domain={DEMO_DOMAIN} score={isPro ? 100 : 85} eligible={isPro} /></div>
+          )}
           {activeTab === 'traffic' && <TabTraffic analytics={settings.analytics} set={set} />}
           {activeTab === 'plans' && (
-            <div className="space-y-6">
+            <div className="space-y-6 bg-bg p-4 md:p-6">
               <Pricing onSelectPro={() => setActiveTab('settings')} />
               <BuyPro />
             </div>
@@ -115,6 +128,7 @@ export function PluginDashboard({ onExit }: PluginDashboardProps) {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -1,140 +1,234 @@
-import { AuditResult, AuditCheck } from '../types';
+import { AuditResult, AuditCheck, CheckId } from '../types';
 import { withBase } from '../utils/base';
+import type { Lang } from '../i18n';
 
+export const CHECK_IDS: CheckId[] = ['robots', 'schema', 'llms', 'feed', 'api', 'agent'];
+
+/** The rubric (100 points). Scores come from the server; nothing here is ever invented client-side. */
 export const baseChecks: AuditCheck[] = [
-  {
-    id: 'robots',
-    name: 'AI crawler policy',
-    description: 'Whether robots.txt gives AI agents (GPTBot, ClaudeBot, PerplexityBot, Google-Extended) a clear, intentional policy instead of an accidental block or silence.',
-    category: 'critical',
-    maxScore: 15,
-    score: 0,
-    passed: false,
-    pluginFix: 'free',
-    howToFix: 'Set an explicit AI-crawler policy — welcome shopping agents, block training-only bots. The plugin writes and maintains these rules for you.'
-  },
-  {
-    id: 'schema',
-    name: 'Product structured data',
-    description: 'Schema.org Product / Offer JSON-LD with price, availability and GTIN. This is what agents parse to understand and compare your products.',
-    category: 'semantic',
-    maxScore: 20,
-    score: 0,
-    passed: false,
-    pluginFix: 'free',
-    howToFix: 'Emit clean, complete Product JSON-LD (with returns & shipping) on every product page. The plugin outputs it and removes duplicates from SEO plugins.'
-  },
-  {
-    id: 'llms',
-    name: 'llms.txt manifest',
-    description: 'A Markdown map at /llms.txt — the context document LLMs read first to understand your store, categories and policies before citing or buying.',
-    category: 'semantic',
-    maxScore: 15,
-    score: 0,
-    passed: false,
-    pluginFix: 'free',
-    howToFix: 'Generate and auto-sync /llms.txt from your catalog and policies. The plugin builds it from your live store — no manual upkeep.'
-  },
-  {
-    id: 'feed',
-    name: 'Machine-readable product feed',
-    description: 'A structured feed or sitemap agents can enumerate — so they discover every product deterministically instead of guessing from HTML.',
-    category: 'transactional',
-    maxScore: 15,
-    score: 0,
-    passed: false,
-    pluginFix: 'free',
-    howToFix: 'Publish a normalized JSON feed plus a Google/XML product feed, cached and auto-refreshed when products change. Served by the plugin.'
-  },
-  {
-    id: 'api',
-    name: 'Structured product API',
-    description: 'A machine-readable API + discovery document agents can call for live price, stock and details — instead of brittle, slow screen-scraping.',
-    category: 'transactional',
-    maxScore: 15,
-    score: 0,
-    passed: false,
-    pluginFix: 'free',
-    howToFix: 'Expose a normalized products/manifest/OpenAPI at a discoverable path. The plugin adds it at /wp-json/agent-shop/v1 and /.well-known/agent-shop.json.'
-  },
-  {
-    id: 'agent',
-    name: 'Deterministic agent-commerce layer',
-    description: 'The transactional layer agents need to actually buy: a discoverable manifest, an agent cart/checkout, and verified-bot handling. Effectively non-existent on stores without a purpose-built plugin today.',
-    category: 'transactional',
-    maxScore: 20,
-    score: 0,
-    passed: false,
-    pluginFix: 'free',
-    howToFix: 'Install Agent Ready Shop: it adds the manifest, the agent commerce API, agentic checkout (Pro) and verified-bot handling — the part standards do not cover yet.'
-  }
+  { id: 'robots', category: 'critical', maxScore: 15, score: 0, passed: false, pluginFix: 'free' },
+  { id: 'schema', category: 'semantic', maxScore: 20, score: 0, passed: false, pluginFix: 'free' },
+  { id: 'llms', category: 'semantic', maxScore: 15, score: 0, passed: false, pluginFix: 'free' },
+  { id: 'feed', category: 'transactional', maxScore: 15, score: 0, passed: false, pluginFix: 'free' },
+  { id: 'api', category: 'transactional', maxScore: 15, score: 0, passed: false, pluginFix: 'free' },
+  { id: 'agent', category: 'transactional', maxScore: 20, score: 0, passed: false, pluginFix: 'free' },
 ];
 
-export async function runSimulatedAudit(url: string, onProgress?: (msg: string) => void): Promise<AuditResult> {
-  const messages = [
-    'Initializing agentic browsing session…',
-    'Live connection & platform detection…',
-    'Reading AI crawler policy (robots.txt)…',
-    'Parsing Schema.org structured data…',
-    'Fetching /llms.txt context…',
-    'Checking product feeds & sitemaps…',
-    'Probing structured product API / discovery…',
-    'Evaluating the agent-commerce layer…',
-    'Calculating AIO (AI Optimization) score…'
-  ];
+export interface CheckCopy {
+  /** Full name of the check. */
+  name: string;
+  /** Short machine-style label used in annotations and tables. */
+  short: string;
+  description: string;
+  /** Plain-language consequence when the check fails. */
+  flaw: string;
+  howToFix: string;
+}
 
-  let detectedPlatform = 'Unknown';
-  let isWoo = false;
-  let pluginDetected = false;
-  let botBlocked = false;
-  let productPage: string | null = null;
+const AGENTS = 'OAI-SearchBot, ChatGPT-User, GPTBot, ClaudeBot, Claude-User, PerplexityBot';
 
-  const checks = JSON.parse(JSON.stringify(baseChecks)) as AuditCheck[];
-  const set = (id: string, score: number, pass: boolean) => {
-    const c = checks.find(x => x.id === id);
-    if (c) { c.score = score; c.passed = pass; }
-  };
+const CHECK_COPY: Record<Lang, Record<CheckId, CheckCopy>> = {
+  en: {
+    robots: {
+      name: 'AI crawler policy',
+      short: 'robots.txt',
+      description: `Whether robots.txt actually allows shopping and answer agents (${AGENTS}) to fetch your store — evaluated rule by rule, not just whether their names are mentioned.`,
+      flaw: 'agents may be blocked or silently ignored',
+      howToFix: 'Set an explicit AI-crawler policy: let shopping and answer agents in, keep training-only bots out. The plugin writes and maintains these rules for you.',
+    },
+    schema: {
+      name: 'Product structured data',
+      short: 'schema.org',
+      description: 'Schema.org Product / Offer JSON-LD with price, availability and GTIN. This is what agents parse to understand and compare your products.',
+      flaw: 'agents can’t read your product details',
+      howToFix: 'Output clean, complete Product JSON-LD (including returns and shipping) on every product page. The plugin generates it and removes duplicates from SEO plugins.',
+    },
+    llms: {
+      name: 'llms.txt manifest',
+      short: 'llms.txt',
+      description: 'A Markdown map at /llms.txt — the context document language models read first to understand your store, categories and policies before they cite or buy.',
+      flaw: 'no context document for language models to cite',
+      howToFix: 'Generate /llms.txt from your catalogue and policies and keep it in sync. The plugin builds it from your live store — no manual upkeep.',
+    },
+    feed: {
+      name: 'Machine-readable product feed',
+      short: 'feed',
+      description: 'A structured feed or sitemap agents can enumerate, so they discover every product deterministically instead of guessing from HTML.',
+      flaw: 'agents can’t enumerate your catalogue',
+      howToFix: 'Publish a normalised JSON feed plus a Google/XML product feed, cached and refreshed whenever products change. The plugin serves both.',
+    },
+    api: {
+      name: 'Structured product API',
+      short: 'api',
+      description: 'A machine-readable API and discovery document agents can call for live price, stock and details — instead of slow, brittle screen-scraping.',
+      flaw: 'agents must scrape HTML — slow and brittle',
+      howToFix: 'Expose normalised products, a manifest and an OpenAPI description at a discoverable path. The plugin adds them at /wp-json/agent-shop/v1 and /.well-known/agent-shop.json.',
+    },
+    agent: {
+      name: 'Agent-commerce layer (manifest / ACP / MCP)',
+      short: 'agent layer',
+      description: 'A validated layer agents can use to transact: a discoverable commerce manifest, Agentic Commerce Protocol (ACP) discovery or an MCP endpoint. Any one of them counts.',
+      flaw: 'agents have no supported way to complete a purchase',
+      howToFix: 'Publish a commerce manifest or ACP / MCP discovery document for your store. On WordPress, Agent Ready Shop adds the manifest and the agent commerce API, with agentic checkout on Pro.',
+    },
+  },
+  sk: {
+    robots: {
+      name: 'Pravidlá pre AI crawlery',
+      short: 'robots.txt',
+      description: `Či robots.txt nákupným a odpovedacím agentom (${AGENTS}) prístup do e-shopu skutočne povoľuje — hodnotíme pravidlo po pravidle, nielen to, či sú v súbore spomenutí.`,
+      flaw: 'agenti môžu byť zablokovaní alebo vás potichu obídu',
+      howToFix: 'Nastavte jasné pravidlá pre AI crawlery: nákupných a odpovedacích agentov pustite dnu, boty zbierajúce dáta len na tréning nechajte vonku. Plugin tieto pravidlá zapíše a udržiava za vás.',
+    },
+    schema: {
+      name: 'Štruktúrované dáta produktov',
+      short: 'schema.org',
+      description: 'Schema.org Product / Offer v JSON-LD s cenou, dostupnosťou a GTIN. Práve z nich agenti čítajú, čo predávate, a porovnávajú vaše produkty.',
+      flaw: 'agenti neprečítajú detaily vašich produktov',
+      howToFix: 'Na každej stránke produktu vypisujte čisté a úplné JSON-LD Product (vrátane vrátenia tovaru a dopravy). Plugin ho generuje a odstráni duplicity zo SEO pluginov.',
+    },
+    llms: {
+      name: 'Manifest llms.txt',
+      short: 'llms.txt',
+      description: 'Mapa vo formáte Markdown na adrese /llms.txt — kontextový dokument, ktorý si jazykové modely prečítajú ako prvý, aby pochopili váš e-shop, kategórie a podmienky skôr, než vás citujú alebo u vás nakúpia.',
+      flaw: 'jazykové modely nemajú kontextový dokument, ktorý by citovali',
+      howToFix: 'Vygenerujte /llms.txt z katalógu a obchodných podmienok a udržiavajte ho aktuálny. Plugin ho zostaví zo živého e-shopu — bez ručnej údržby.',
+    },
+    feed: {
+      name: 'Strojovo čitateľný produktový feed',
+      short: 'feed',
+      description: 'Štruktúrovaný feed alebo sitemapa, ktorú agent prejde položku po položke, takže každý produkt nájde spoľahlivo a nemusí ho hádať z HTML.',
+      flaw: 'agenti si nevedia prejsť váš katalóg',
+      howToFix: 'Zverejnite normalizovaný JSON feed a produktový feed Google/XML, ktoré sa ukladajú do cache a obnovia pri každej zmene produktov. Plugin poskytuje oba.',
+    },
+    api: {
+      name: 'Štruktúrované produktové API',
+      short: 'api',
+      description: 'Strojovo čitateľné API a discovery dokument, cez ktoré si agent vypýta aktuálnu cenu, sklad a detaily — namiesto pomalého a krehkého scrapovania stránok.',
+      flaw: 'agenti musia scrapovať HTML — pomalé a nespoľahlivé',
+      howToFix: 'Sprístupnite normalizované produkty, manifest a popis OpenAPI na adrese, ktorú agenti nájdu. Plugin ich pridá na /wp-json/agent-shop/v1 a /.well-known/agent-shop.json.',
+    },
+    agent: {
+      name: 'Vrstva pre agentický obchod (manifest / ACP / MCP)',
+      short: 'agentická vrstva',
+      description: 'Overená vrstva, cez ktorú môžu agenti nakupovať: dohľadateľný obchodný manifest, discovery protokolu Agentic Commerce Protocol (ACP) alebo endpoint MCP. Stačí ktorákoľvek z nich.',
+      flaw: 'agenti nemajú podporovaný spôsob, ako dokončiť nákup',
+      howToFix: 'Zverejnite pre svoj e-shop obchodný manifest alebo discovery dokument ACP / MCP. Na WordPresse pridá Agent Ready Shop manifest aj API pre agentov, vo verzii Pro s agentickým checkoutom.',
+    },
+  },
+  cs: {
+    robots: {
+      name: 'Pravidla pro AI crawlery',
+      short: 'robots.txt',
+      description: `Zda robots.txt nákupním a odpovídacím agentům (${AGENTS}) přístup do e-shopu skutečně povoluje — hodnotíme pravidlo po pravidle, nejen to, zda jsou v souboru zmíněni.`,
+      flaw: 'agenti mohou být zablokováni nebo vás potichu obejdou',
+      howToFix: 'Nastavte jasná pravidla pro AI crawlery: nákupní a odpovídací agenty pusťte dovnitř, boty sbírající data jen pro trénink nechte venku. Plugin tato pravidla zapíše a udržuje za vás.',
+    },
+    schema: {
+      name: 'Strukturovaná data produktů',
+      short: 'schema.org',
+      description: 'Schema.org Product / Offer v JSON-LD s cenou, dostupností a GTIN. Právě z nich agenti čtou, co prodáváte, a porovnávají vaše produkty.',
+      flaw: 'agenti nepřečtou detaily vašich produktů',
+      howToFix: 'Na každé stránce produktu vypisujte čisté a úplné JSON-LD Product (včetně vrácení zboží a dopravy). Plugin ho generuje a odstraní duplicity ze SEO pluginů.',
+    },
+    llms: {
+      name: 'Manifest llms.txt',
+      short: 'llms.txt',
+      description: 'Mapa ve formátu Markdown na adrese /llms.txt — kontextový dokument, který si jazykové modely přečtou jako první, aby pochopily váš e-shop, kategorie a podmínky dřív, než vás citují nebo u vás nakoupí.',
+      flaw: 'jazykové modely nemají kontextový dokument, který by citovaly',
+      howToFix: 'Vygenerujte /llms.txt z katalogu a obchodních podmínek a udržujte ho aktuální. Plugin ho sestaví z živého e-shopu — bez ruční údržby.',
+    },
+    feed: {
+      name: 'Strojově čitelný produktový feed',
+      short: 'feed',
+      description: 'Strukturovaný feed nebo sitemapa, kterou agent projde položku po položce, takže každý produkt najde spolehlivě a nemusí ho hádat z HTML.',
+      flaw: 'agenti si neumějí projít váš katalog',
+      howToFix: 'Zveřejněte normalizovaný JSON feed a produktový feed Google/XML, které se ukládají do cache a obnoví při každé změně produktů. Plugin poskytuje oba.',
+    },
+    api: {
+      name: 'Strukturované produktové API',
+      short: 'api',
+      description: 'Strojově čitelné API a discovery dokument, přes které si agent vyžádá aktuální cenu, sklad a detaily — místo pomalého a křehkého scrapování stránek.',
+      flaw: 'agenti musí scrapovat HTML — pomalé a nespolehlivé',
+      howToFix: 'Zpřístupněte normalizované produkty, manifest a popis OpenAPI na adrese, kterou agenti najdou. Plugin je přidá na /wp-json/agent-shop/v1 a /.well-known/agent-shop.json.',
+    },
+    agent: {
+      name: 'Vrstva pro agentický obchod (manifest / ACP / MCP)',
+      short: 'agentická vrstva',
+      description: 'Ověřená vrstva, přes kterou mohou agenti nakupovat: dohledatelný obchodní manifest, discovery protokolu Agentic Commerce Protocol (ACP) nebo endpoint MCP. Stačí kterákoli z nich.',
+      flaw: 'agenti nemají podporovaný způsob, jak dokončit nákup',
+      howToFix: 'Zveřejněte pro svůj e-shop obchodní manifest nebo discovery dokument ACP / MCP. Na WordPressu přidá Agent Ready Shop manifest i API pro agenty, ve verzi Pro s agentickým checkoutem.',
+    },
+  },
+};
+
+export const checkCopy = (lang: Lang, id: CheckId): CheckCopy => CHECK_COPY[lang][id];
+
+export type AuditErrorKind = 'rate' | 'invalid' | 'server' | 'network';
+
+/** A failed audit. The UI shows a translated message per kind — never a made-up score. */
+export class AuditError extends Error {
+  kind: AuditErrorKind;
+  constructor(kind: AuditErrorKind, detail?: string) {
+    super(detail || kind);
+    this.name = 'AuditError';
+    this.kind = kind;
+  }
+}
+
+/** Number of progress steps shown while the audit request is in flight (see t.scan.steps). */
+export const AUDIT_STEPS = 9;
+
+/**
+ * Run the live audit on the server. Throws AuditError on any failure:
+ * HTTP 429 → 'rate', 400 → 'invalid', other non-2xx or a malformed body → 'server',
+ * no response at all → 'network'.
+ */
+export async function runAudit(url: string, onProgress?: (step: number) => void): Promise<AuditResult> {
+  // The server probes everything in one request, so the steps are only a waiting
+  // indicator: they advance on a timer and hold on the last one until it answers.
+  let step = 0;
+  onProgress?.(0);
+  const timer = setInterval(() => {
+    if (step < AUDIT_STEPS - 1) onProgress?.(++step);
+  }, 900);
 
   try {
-    if (onProgress) onProgress(messages[0]);
-    await new Promise(r => setTimeout(r, 400));
-    if (onProgress) onProgress(messages[1]);
-
-    const res = await fetch(withBase(`/api/run-audit?url=${encodeURIComponent(url)}`));
-    if (res.ok) {
-      const data = await res.json();
-      detectedPlatform = data.platform || 'Unknown platform';
-      isWoo = !!data.isWooCommerce;
-      pluginDetected = !!data.pluginDetected;
-      botBlocked = !!data.blocked;
-      productPage = data.productPage || null;
-
-      if (data.scores) {
-        for (const id of ['robots', 'schema', 'llms', 'feed', 'api', 'agent']) {
-          if (data.scores[id]) set(id, data.scores[id].score || 0, !!data.scores[id].pass);
-        }
-      }
-    } else {
-      detectedPlatform = 'API Error';
+    let res: Response;
+    try {
+      res = await fetch(withBase(`/api/run-audit?url=${encodeURIComponent(url)}`));
+    } catch (err) {
+      throw new AuditError('network', String(err));
     }
-  } catch (err) {
-    console.error('Server fetch failed', err);
-    detectedPlatform = 'Connection Error';
-  }
 
-  for (let i = 2; i < messages.length; i++) {
-    if (onProgress) onProgress(messages[i]);
-    await new Promise(r => setTimeout(r, 350));
-  }
+    let data: any = null;
+    try { data = await res.json(); } catch { /* non-JSON body */ }
 
-  return {
-    url,
-    platform: detectedPlatform,
-    isWooCommerce: isWoo,
-    pluginDetected,
-    botBlocked,
-    productPage,
-    totalScore: checks.reduce((acc, curr) => acc + curr.score, 0),
-    checks
-  };
+    if (!res.ok) {
+      const detail = data && typeof data.error === 'string' ? data.error : `HTTP ${res.status}`;
+      throw new AuditError(res.status === 429 ? 'rate' : res.status === 400 ? 'invalid' : 'server', detail);
+    }
+    if (!data || typeof data.scores !== 'object' || data.scores === null) {
+      throw new AuditError('server', 'Malformed audit response');
+    }
+
+    const checks: AuditCheck[] = baseChecks.map(c => {
+      const s = data.scores[c.id];
+      const score = Math.max(0, Math.min(c.maxScore, Number(s?.score) || 0));
+      return { ...c, score, passed: !!s?.pass };
+    });
+
+    return {
+      url,
+      platform: typeof data.platform === 'string' && data.platform ? data.platform : '—',
+      isWooCommerce: !!data.isWooCommerce,
+      pluginDetected: !!data.pluginDetected,
+      botBlocked: !!data.blocked,
+      productPage: typeof data.productPage === 'string' ? data.productPage : null,
+      totalScore: checks.reduce((acc, c) => acc + c.score, 0),
+      checks,
+    };
+  } finally {
+    clearInterval(timer);
+  }
 }

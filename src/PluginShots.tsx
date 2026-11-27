@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { buildBadgeSvg } from './utils/badge';
 
 /**
@@ -7,7 +6,8 @@ import { buildBadgeSvg } from './utils/badge';
  * browser frame). Depicts the real screens: AIO dashboard, settings, license.
  */
 
-const G = '#10a37f';
+// WP-admin accent for the mocked screens (the mock keeps the WordPress look).
+const G = '#2271b1';
 
 function Toggle({ on }: { on: boolean }) {
   return (
@@ -79,7 +79,7 @@ function ScreenLicense() {
         <div dangerouslySetInnerHTML={{ __html: badge }} />
       </div>
       <div style={{ fontSize: 9.5, color: '#50575e', fontFamily: 'monospace', background: '#f6f7f7', border: '1px solid #e2e4e7', borderRadius: 4, padding: '6px 8px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-        &lt;a href="…/verify/ARS-…"&gt;&lt;img src="…/api/badge?…"&gt;&lt;/a&gt;
+        &lt;a href="…/verify?d=…"&gt;&lt;img src="…/api/badge?d=…"&gt;&lt;/a&gt;
       </div>
     </div>
   );
@@ -90,8 +90,6 @@ const SCREENS = [
   { label: 'Settings', el: <ScreenSettings /> },
   { label: 'License & certificate', el: <ScreenLicense /> },
 ];
-
-function dot(c: string): React.CSSProperties { return { width: 10, height: 10, borderRadius: '50%', background: c, display: 'inline-block' }; }
 
 export function PluginShots() {
   const [i, setI] = useState(0);
@@ -105,18 +103,14 @@ export function PluginShots() {
 
   return (
     <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <div className="rounded-xl overflow-hidden border border-[var(--border)]" style={{ background: '#f0f0f1', boxShadow: '0 20px 60px rgba(0,0,0,0.35)' }}>
-        {/* browser chrome */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: '#e4e6e8', borderBottom: '1px solid #d0d2d5' }}>
-          <span style={{ display: 'flex', gap: 5 }}>
-            <span style={dot('#ff5f57')} /><span style={dot('#febc2e')} /><span style={dot('#28c840')} />
-          </span>
-          <span style={{ flex: 1, textAlign: 'center', fontSize: 10.5, color: '#6b7075', fontFamily: 'monospace', background: '#fff', borderRadius: 6, padding: '3px 8px', border: '1px solid #d6d8db', whiteSpace: 'nowrap', overflow: 'hidden' }}>
-            your-store.com/wp-admin › <b style={{ color: G }}>Agent Shop</b> — {SCREENS[i].label}
-          </span>
+      <div className="mock-frame">
+        {/* frame bar in the site's own voice */}
+        <div className="mock-bar">
+          <span className="label">wp-admin / Agent Shop / <span style={{ color: 'var(--ink)' }}>{SCREENS[i].label}</span></span>
+          <span className="label label-clay flex-shrink-0">{String(i + 1).padStart(2, '0')} / {String(SCREENS.length).padStart(2, '0')}</span>
         </div>
-        {/* screen area */}
-        <div style={{ position: 'relative', minHeight: 190, padding: 14 }}>
+        {/* screen area — WordPress admin look */}
+        <div style={{ position: 'relative', minHeight: 190, padding: 14, background: '#f0f0f1', fontFamily: '-apple-system, "Segoe UI", Roboto, sans-serif' }}>
           {SCREENS.map((s, idx) => (
             <div key={s.label} style={{ position: idx === i ? 'relative' : 'absolute', inset: idx === i ? undefined : 14, opacity: idx === i ? 1 : 0, transition: 'opacity .4s', pointerEvents: idx === i ? 'auto' : 'none' }}>
               {s.el}
@@ -125,14 +119,19 @@ export function PluginShots() {
         </div>
       </div>
       {/* controls */}
-      <div className="flex items-center justify-center gap-3 mt-3">
-        <button onClick={() => go(-1)} className="btn-ghost w-7 h-7 rounded-full flex items-center justify-center" aria-label="Previous"><ChevronLeft size={15} /></button>
-        <div className="flex gap-1.5">
+      <div className="flex items-center justify-between gap-4 mt-3">
+        <div className="dashes">
           {SCREENS.map((_, idx) => (
-            <button key={idx} onClick={() => setI(idx)} aria-label={`Slide ${idx + 1}`} style={{ width: idx === i ? 18 : 7, height: 7, borderRadius: 999, border: 0, cursor: 'pointer', background: idx === i ? G : 'rgba(255,255,255,0.25)', transition: 'all .2s' }} />
+            <button key={idx} type="button" onClick={() => setI(idx)} aria-label={`Slide ${idx + 1}`} aria-current={idx === i}
+              style={{ width: 26, height: 14, padding: 0, border: 0, background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+              <i className={idx === i ? 'on' : undefined} />
+            </button>
           ))}
         </div>
-        <button onClick={() => go(1)} className="btn-ghost w-7 h-7 rounded-full flex items-center justify-center" aria-label="Next"><ChevronRight size={15} /></button>
+        <div className="flex gap-2">
+          <button type="button" onClick={() => go(-1)} className="btn btn-sm" aria-label="Previous">←</button>
+          <button type="button" onClick={() => go(1)} className="btn btn-sm" aria-label="Next">→</button>
+        </div>
       </div>
     </div>
   );
