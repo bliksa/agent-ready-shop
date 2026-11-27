@@ -10,7 +10,7 @@ const en = {
   common: { copy: 'Copy', copied: 'Copied', back: 'Back', backToAudit: 'Back to audit', getPlugin: 'Get the plugin — free', points: 'pts' },
   hero: {
     title: 'Can AI agents buy from your store?',
-    leadA: 'AI shopping agents don’t click through your site — they read its files, feeds and APIs. Enter your store to see what they can ',
+    leadA: 'AI shopping agents don’t click through your site — they read its files, feeds and APIs. Enter your store to see what they can ',
     leadHi: 'read, price and buy',
     leadB: '.',
     urlLabel: 'Store address',

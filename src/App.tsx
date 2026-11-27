@@ -124,7 +124,7 @@ function TopBar({ onHome, onPlugin, onDirectory, onNewAudit }: { onHome: () => v
       <div className="wrap">
         <div className="topbar-row">
           <button type="button" className="wordmark" onClick={onHome} aria-label={t.nav.home}>
-            <span className="wordmark-name"><Mark />Shop</span>
+            <span className="wordmark-name"><Mark /><i aria-hidden="true">/</i>Shop</span>
             <span className="wordmark-tld">Agent Ready</span>
           </button>
           <div className="nav">
@@ -142,7 +142,7 @@ function Footer() {
   return (
     <footer className="border-t border-line">
       <div className="wrap py-7 flex flex-wrap items-center justify-between gap-4">
-        <span className="label label-dim"><span style={{ color: 'var(--ink)' }}><Mark />Shop</span> · Agent Ready Shop</span>
+        <span className="label label-dim"><span style={{ color: 'var(--ink)' }}><Mark /><span style={{ color: 'var(--clay)' }}>/</span>Shop</span> · Agent Ready Shop</span>
         <a href={withBase('/api/download-plugin')} className="link">{t.common.getPlugin}</a>
       </div>
     </footer>
@@ -153,9 +153,12 @@ function Flaps({ text }: { text: string }) {
   return (
     <div className="flaps" aria-hidden="true">
       {text.split(' ').map((w, i) => (
-        <span className="flap-word" key={i}>
-          {w.split('').map((ch, j) => <span className="flap" key={j}>{ch}</span>)}
-        </span>
+        <React.Fragment key={i}>
+          {i > 0 && <span className="flap-slash">/</span>}
+          <span className="flap-word">
+            {w.split('').map((ch, j) => <span className="flap" key={j}>{ch}</span>)}
+          </span>
+        </React.Fragment>
       ))}
     </div>
   );
@@ -169,10 +172,10 @@ function IdleView({ url, setUrl, onStart, error }: { url: string; setUrl: (s: st
       <section className="hero">
         <div className="hero-bg" style={{ backgroundImage: `url(${heroImage})` }} aria-hidden="true" />
         <Flaps text="AGENT READY" />
-        <div className="max-w-[620px] mt-8 md:mt-11">
-          <h1 className="display display-md mb-5">{t.hero.title}</h1>
-          <p className="lead mb-8">
-            {t.hero.leadA}<span className="hi">{t.hero.leadHi}</span>{t.hero.leadB}
+        <h1 className="display display-md hero-title mt-8 md:mt-11 mb-5">{t.hero.title}</h1>
+        <div className="max-w-[620px]">
+          <p className="lead hero-lead mb-8">
+            {t.hero.leadA}<span className="hi whitespace-nowrap">{t.hero.leadHi}</span>{t.hero.leadB}
           </p>
 
           <form onSubmit={onStart}>
