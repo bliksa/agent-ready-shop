@@ -3,16 +3,76 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Agent Ready Shop — AI Commerce Analyzer & Certification</title>
-    <meta name="description" content="Can AI agents buy from your store? Free AIO audit — see what ChatGPT, Claude and Gemini can and can't do with your store, then fix it with one WordPress plugin." />
+    <title>Agent Ready Shop — can AI agents buy from your store?</title>
+    <meta name="description" content="Free AIO audit for online stores: see what ChatGPT, Claude and other shopping agents can read, price and buy on your site — and fix the gaps with one WordPress plugin." />
+    <link rel="canonical" href="%VITE_SITE_URL%/" />
+    <meta name="theme-color" content="#0a0b0d" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Agent Ready Shop" />
     <meta property="og:title" content="Can AI agents buy from your store?" />
     <meta property="og:description" content="Free AIO (AI Optimization) audit. See exactly what shopping agents can read, price and buy — and get the fixes." />
-    <meta property="og:type" content="website" />
+    <meta property="og:url" content="%VITE_SITE_URL%/" />
+    <meta property="og:image" content="%VITE_SITE_URL%/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="%VITE_SITE_URL%/og.png" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800;900&family=IBM+Plex+Mono:wght@500&display=swap" />
+    <style>
+      html, body { margin: 0; background: #0a0b0d; color: #ece9e2; }
+      .nojs { max-width: 760px; margin: 0 auto; padding: 56px 16px 72px; font: 17px/1.6 "Helvetica Neue", Helvetica, Arial, sans-serif; color: #a9adb3; }
+      .nojs h1 { margin: 0 0 18px; font: 900 clamp(40px, 9vw, 72px)/0.92 "Barlow Condensed", "Arial Narrow", Arial, sans-serif; text-transform: uppercase; color: #ece9e2; }
+      .nojs h2 { margin: 40px 0 10px; padding-top: 16px; border-top: 1px solid rgba(236, 233, 226, 0.12); font: 500 11px/1.5 "IBM Plex Mono", ui-monospace, Menlo, monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #d97757; }
+      .nojs p { margin: 0 0 14px; }
+      .nojs ul { margin: 0; padding-left: 20px; }
+      .nojs li { margin: 0 0 8px; }
+      .nojs strong { color: #ece9e2; }
+      .nojs a { display: inline-block; margin-top: 8px; padding: 12px 18px; background: #ece9e2; color: #0a0b0d; text-decoration: none; font: 500 11px/1.4 "IBM Plex Mono", ui-monospace, Menlo, monospace; letter-spacing: 0.14em; text-transform: uppercase; }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Agent Ready Shop",
+        "url": "%VITE_SITE_URL%/",
+        "image": "%VITE_SITE_URL%/og.png",
+        "description": "An audit that measures how well AI shopping agents can read, price and buy from an online store, and a WordPress plugin that adds the missing agent-commerce layer: AI crawler policy, llms.txt, Product JSON-LD, a product feed, a structured product API and a commerce manifest.",
+        "applicationCategory": "BusinessApplication",
+        "applicationSubCategory": "E-commerce",
+        "operatingSystem": "WordPress",
+        "downloadUrl": "%VITE_SITE_URL%/agent-ready-shop.zip",
+        "inLanguage": ["en", "sk", "cs"],
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR", "description": "Free plugin and free audit" }
+      }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Static fallback for crawlers, agents and browsers without JavaScript. React replaces it on mount. -->
+      <main class="nojs">
+        <h1>Can AI agents buy from your store?</h1>
+        <p><strong>Agent Ready Shop</strong> is a free audit for online stores. Shopping agents such as ChatGPT, Claude and Perplexity don’t click through a site — they read it through files, feeds and APIs. The audit shows what an agent can and can’t do with your store and scores it from 0 to 100 (the AIO score).</p>
+
+        <h2>What the audit checks</h2>
+        <ul>
+          <li><strong>AI crawler policy (15 points)</strong> — whether robots.txt actually allows shopping and answer agents (OAI-SearchBot, ChatGPT-User, GPTBot, ClaudeBot, Claude-User, PerplexityBot).</li>
+          <li><strong>Product structured data (20 points)</strong> — Schema.org Product / Offer JSON-LD with price, availability and GTIN.</li>
+          <li><strong>llms.txt manifest (15 points)</strong> — a Markdown map of the store at /llms.txt for language models.</li>
+          <li><strong>Machine-readable product feed (15 points)</strong> — a feed or sitemap agents can enumerate.</li>
+          <li><strong>Structured product API (15 points)</strong> — an API and discovery document for live price, stock and details.</li>
+          <li><strong>Agent-commerce layer (20 points)</strong> — a validated commerce manifest, Agentic Commerce Protocol (ACP) or MCP discovery.</li>
+        </ul>
+
+        <h2>The WordPress plugin</h2>
+        <p>The free Agent Ready Shop plugin for WordPress (WooCommerce and other store plugins) writes and maintains llms.txt, outputs clean Product schema, publishes a product feed and a read-only commerce API with a discovery manifest, and sets an explicit AI-crawler policy.</p>
+        <p><a href="agent-ready-shop.zip">Download the plugin (agent-ready-shop.zip)</a></p>
+
+        <noscript><p>The interactive audit needs JavaScript. Everything above is the full description of what it measures.</p></noscript>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

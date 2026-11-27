@@ -55,6 +55,8 @@ body { margin: 0; color: var(--ink); font-family: var(--sans); font-size: 16px; 
 input, select, textarea { color-scheme: dark; }
 :focus-visible { outline: 1px solid var(--clay2); outline-offset: 2px; }
 
+/* Components live in the components layer so Tailwind utilities (mb-*, hidden, …) can override them. */
+@layer components {
 /* ---------- layout ---------- */
 .shell { min-height: 100vh; background: var(--bg); color: var(--ink); overflow-x: clip; }
 .wrap { width: 100%; max-width: 1360px; margin-inline: auto; padding-inline: 16px; }
@@ -184,9 +186,11 @@ input, select, textarea { color-scheme: dark; }
 .table th { font-family: var(--mono); font-weight: 500; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink3); padding: 12px 14px; border-bottom: 1px solid var(--line2); }
 .table td { padding: 13px 14px; border-bottom: 1px solid var(--line); color: var(--ink2); vertical-align: middle; }
 .table tr:last-child td { border-bottom: 0; }
+@media (max-width: 520px) { .table th, .table td { padding-inline: 10px; } }
 .num { font-family: var(--display); font-weight: 800; letter-spacing: 0; line-height: 1; color: var(--ink); }
 
 /* ---------- embedded product mock (WP-admin screens keep their own look) ---------- */
 .mock-frame { border: 1px solid var(--line2); background: var(--bg2); }
 .mock-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 12px; border-bottom: 1px solid var(--line); }
 .mock-bar .label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}

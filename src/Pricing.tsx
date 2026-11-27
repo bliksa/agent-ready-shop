@@ -52,8 +52,8 @@ export function Pricing({ onSelectPro }: { onSelectPro?: () => void }) {
           <thead>
             <tr>
               <th>{p.capability}</th>
-              <th className="text-center w-[110px] sm:w-[150px]">{p.free}</th>
-              <th className="text-center w-[130px] sm:w-[240px]" style={{ color: 'var(--clay2)' }}>{p.pro}</th>
+              <th className="text-center w-[76px] sm:w-[150px]">{p.free}</th>
+              <th className="text-center w-[108px] sm:w-[240px]" style={{ color: 'var(--clay2)' }}>{p.pro}</th>
             </tr>
           </thead>
           <tbody>

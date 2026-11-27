@@ -42,7 +42,7 @@ export function Certificate({ domain, score, eligible, onBack }: CertificateProp
             <DetectLabel name={c.scoreLabel} value={(cert.score / 100).toFixed(2)} />
             <div className="flex items-baseline gap-3">
               <span className="num" style={{ fontSize: 'clamp(104px, 24vw, 140px)', fontWeight: 900, lineHeight: 0.86 }}>{cert.score}</span>
-              <span className="label">/ 100 AIO</span>
+              <span className="label whitespace-nowrap">/ 100 AIO</span>
             </div>
             <Dashes total={20} on={Math.round(cert.score / 5)} className="dashes-fill dashes-tight mt-4" />
           </div>

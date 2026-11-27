@@ -352,7 +352,7 @@ function ResultsView({ result, onCertify }: { result: AuditResult; onCertify: ()
           <DetectLabel name={t.results.scoreLabel} value={(score / 100).toFixed(2)} />
           <div className="flex items-baseline gap-3">
             <span className="num" style={{ fontSize: 'clamp(132px, 30vw, 200px)', fontWeight: 900, lineHeight: 0.86 }}>{score}</span>
-            <span className="label">/ 100 AIO</span>
+            <span className="label whitespace-nowrap">/ 100 AIO</span>
           </div>
           <Dashes total={20} on={Math.round(score / 5)} className="dashes-fill dashes-tight mt-5" />
         </div>

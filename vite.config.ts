@@ -3,6 +3,9 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
 
+// Public URL of the deployed site — fills %VITE_SITE_URL% in index.html (canonical, og:url, og:image, JSON-LD).
+process.env.VITE_SITE_URL ??= 'https://www.godot.sk/ashop';
+
 export default defineConfig(() => {
   // BASE_PATH=/ashop serves the whole app from a subdirectory (default: domain root).
   const base = (process.env.BASE_PATH || '').replace(/\/+$/, '') + '/';

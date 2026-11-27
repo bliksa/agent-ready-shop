@@ -68,7 +68,7 @@ export function PluginDashboard({ onExit }: PluginDashboardProps) {
           </button>
           <div className="nav">
             <span className="label label-dim hidden sm:inline">Plugin demo · WP admin mock</span>
-            <button type="button" onClick={onExit} className="btn btn-sm">← Back to analyzer</button>
+            <button type="button" onClick={onExit} className="btn btn-sm whitespace-nowrap">← <span className="hidden sm:inline">Back to </span>analyzer</button>
           </div>
         </div>
       </header>
