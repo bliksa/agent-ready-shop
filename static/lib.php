@@ -569,8 +569,9 @@ function ars_detect_platform( $html ) {
 		}
 		return false;
 	};
-	if ( $any( array( 'wp-content/', 'wp-includes/', 'name="generator" content="wordpress' ) ) ) {
-		return $any( array( 'woocommerce' ) ) ? 'WordPress / WooCommerce' : 'WordPress';
+	if ( $any( array( 'wp-content/', 'wp-includes/', '/wp-json', 'api.w.org', 'wp-block-', 'wp-emoji', 'name="generator" content="wordpress' ) ) ) {
+		// WooCommerce by what the plugin itself emits; the bare word also appears on sites that only write about it.
+		return $any( array( 'plugins/woocommerce', 'woocommerce-no-js', 'wc-ajax', 'wc-blocks', 'woocommerce_params' ) ) ? 'WordPress / WooCommerce' : 'WordPress';
 	}
 	$platforms = array(
 		'Shopify'     => array( 'cdn.shopify.com', 'myshopify.com', 'var shopify', 'shopify.theme' ),
@@ -680,7 +681,20 @@ function ars_run_audit( $target ) {
 		'man'     => $origin . '/.well-known/agent-shop.json',
 		'acp'     => $origin . '/.well-known/agentic-commerce.json',
 		'mcp'     => $origin . '/.well-known/mcp.json',
+		'wpj'     => $origin . '/wp-json/',
 	), 8 );
+
+	// WordPress says what it is at /wp-json/, even when the storefront HTML is cached, minified or
+	// served from a CDN and carries none of its usual paths. Its namespaces also name WooCommerce.
+	$wp = $r['wpj'] && 200 === $r['wpj']['status'] ? json_decode( $r['wpj']['text'], true ) : null;
+	if ( is_array( $wp ) && isset( $wp['namespaces'] ) && is_array( $wp['namespaces'] ) && ( 0 === strpos( $platform, 'Unknown' ) || 0 === strpos( $platform, 'WordPress' ) ) ) {
+		foreach ( $wp['namespaces'] as $ns ) {
+			if ( is_string( $ns ) && 0 === strpos( $ns, 'wc/' ) ) {
+				$is_woo = true;
+			}
+		}
+		$platform = $is_woo ? 'WordPress / WooCommerce' : 'WordPress';
+	}
 
 	// robots.txt — must actually BE a robots file, not an HTML fallback. The
 	// policy is evaluated per agent: naming GPTBot in a Disallow earns nothing.

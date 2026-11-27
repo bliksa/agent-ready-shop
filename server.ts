@@ -230,8 +230,9 @@ const PLATFORMS: [string, string[]][] = [
 ];
 function detectPlatform(html: string): string | null {
   const any = (needles: string[]) => needles.some(n => html.includes(n));
-  if (any(['wp-content/', 'wp-includes/', 'name="generator" content="wordpress'])) {
-    return html.includes('woocommerce') ? 'WordPress / WooCommerce' : 'WordPress';
+  if (any(['wp-content/', 'wp-includes/', '/wp-json', 'api.w.org', 'wp-block-', 'wp-emoji', 'name="generator" content="wordpress'])) {
+    // WooCommerce by what the plugin itself emits; the bare word also appears on sites that only write about it.
+    return any(['plugins/woocommerce', 'woocommerce-no-js', 'wc-ajax', 'wc-blocks', 'woocommerce_params']) ? 'WordPress / WooCommerce' : 'WordPress';
   }
   for (const [name, needles] of PLATFORMS) if (any(needles)) return name;
   return null;
@@ -291,7 +292,7 @@ async function runAudit(targetUrl: string, clientIp = 'local'): Promise<AuditDat
   if (blocked) platform = platform === 'Unknown / Custom Solution' ? 'Unknown (bot-blocked)' : platform;
 
   // 2) Independent probes in parallel against the canonical origin.
-  const [rob, llm, sitemap, ourXml, productsJson, aiPlugin, man, acp, mcp] = await Promise.all([
+  const [rob, llm, sitemap, ourXml, productsJson, aiPlugin, man, acp, mcp, wpJson] = await Promise.all([
     fetchText(origin + '/robots.txt', 6000),
     fetchText(origin + '/llms.txt', 6000),
     fetchText(origin + '/sitemap.xml', 8000),
@@ -301,7 +302,16 @@ async function runAudit(targetUrl: string, clientIp = 'local'): Promise<AuditDat
     fetchText(origin + '/.well-known/agent-shop.json', 6000),
     fetchText(origin + '/.well-known/agentic-commerce.json', 6000),
     fetchText(origin + '/.well-known/mcp.json', 6000),
+    fetchText(origin + '/wp-json/', 6000),
   ]);
+
+  // WordPress says what it is at /wp-json/, even when the storefront HTML is cached, minified or
+  // served from a CDN and carries none of its usual paths. Its namespaces also name WooCommerce.
+  const wp = jsonOf(wpJson);
+  if (wp && Array.isArray(wp.namespaces) && (platform.startsWith('Unknown') || platform.startsWith('WordPress'))) {
+    if (wp.namespaces.some((ns: unknown) => typeof ns === 'string' && ns.startsWith('wc/'))) isWooCommerce = true;
+    platform = isWooCommerce ? 'WordPress / WooCommerce' : 'WordPress';
+  }
 
   // robots.txt — must actually BE a robots file, not an SPA/WAF HTML fallback. The
   // policy is evaluated per agent: naming GPTBot in a Disallow earns nothing.
