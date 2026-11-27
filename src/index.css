@@ -139,6 +139,23 @@ input, select, textarea { color-scheme: dark; }
 .row { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 4px 12px; padding: 16px 0; border-bottom: 1px solid var(--line); }
 @media (min-width: 1024px) { .row { grid-template-columns: 34px minmax(0, 300px) minmax(0, 1fr); gap: 24px; align-items: baseline; } }
 .row-num { font-family: var(--mono); font-weight: 500; font-size: 13px; color: var(--clay); padding-top: 1px; }
+
+/* Reveal on scroll (see useReveal): the title rises, then each row draws its hairline from the
+   left and its number, name and description follow, one row after another. */
+.reveal .sec-head .display, .reveal .row > * { opacity: 0; transform: translateY(10px); transition: opacity .5s ease-out, transform .6s cubic-bezier(.2, .7, .2, 1); }
+.reveal .row > * { transition-delay: calc(140ms + var(--i, 0) * 80ms); }
+.reveal .row > :nth-child(2) { transition-delay: calc(190ms + var(--i, 0) * 80ms); }
+.reveal .row > :nth-child(3) { transition-delay: calc(240ms + var(--i, 0) * 80ms); }
+.reveal .rows, .reveal .row { position: relative; border-color: transparent; }
+.reveal .rows::before, .reveal .row::after { content: ""; position: absolute; left: 0; right: 0; height: 1px; background: var(--line); transform: scaleX(0); transform-origin: left; transition: transform .8s cubic-bezier(.2, .7, .2, 1); }
+.reveal .rows::before { top: -1px; }
+.reveal .row::after { bottom: -1px; transition-delay: calc(100ms + var(--i, 0) * 80ms); }
+.reveal.is-in .sec-head .display, .reveal.is-in .row > * { opacity: 1; transform: none; }
+.reveal.is-in .rows::before, .reveal.is-in .row::after { transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal .sec-head .display, .reveal .row > * { opacity: 1; transform: none; transition: none; }
+  .reveal .rows::before, .reveal .row::after { transform: none; transition: none; }
+}
 .kv { display: grid; grid-template-columns: minmax(0, 132px) minmax(0, 1fr); gap: 14px; padding: 10px 0; border-top: 1px solid var(--line); align-items: baseline; }
 .kv:last-child { border-bottom: 1px solid var(--line); }
 

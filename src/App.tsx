@@ -14,7 +14,7 @@ import { Directory } from './Directory';
 import { PluginShots } from './PluginShots';
 import { normalizeDomain } from './utils/badge';
 import { useT } from './i18n';
-import { SectionHead, Dashes, DetectLabel, Logo } from './ui';
+import { SectionHead, Dashes, DetectLabel, Logo, useReveal } from './ui';
 import heroImage from './assets/claudia-chrome.webp';
 
 // Internal vendor tool: only the Node build ships it. The literal env check lets
@@ -195,6 +195,7 @@ function Flaps({ text }: { text: string }) {
 
 function IdleView({ url, setUrl, onStart, error }: { url: string; setUrl: (s: string) => void; onStart: (e: FormEvent) => void; error: AuditErrorKind | null }) {
   const { t, lang } = useT();
+  const checks = useReveal<HTMLElement>();
   return (
     <div className="view">
       {/* Hero */}
@@ -227,13 +228,13 @@ function IdleView({ url, setUrl, onStart, error }: { url: string; setUrl: (s: st
       </section>
 
       {/* The rubric: six checks, in the order an agent needs them */}
-      <section className="sec">
+      <section ref={checks.ref} className={`sec reveal${checks.shown ? ' is-in' : ''}`}>
         <SectionHead title={t.checksSection.title} />
         <ol className="rows list-none m-0 p-0">
           {baseChecks.map((c, i) => {
             const copy = checkCopy(lang, c.id);
             return (
-              <li className="row" key={c.id}>
+              <li className="row" key={c.id} style={{ '--i': i } as React.CSSProperties}>
                 <span className="row-num" aria-hidden="true">{i + 1}</span>
                 <h3 className="m-0 text-[17px] leading-snug font-bold text-ink">{copy.name}</h3>
                 <p className="body m-0 col-start-2 lg:col-start-auto">{copy.description}</p>

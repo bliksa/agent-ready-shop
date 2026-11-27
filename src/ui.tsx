@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { LOGO } from './logo';
 
 /** Section header: condensed title, optional clay number and right-aligned mono note. */
@@ -38,4 +38,23 @@ export function Logo({ className = '' }: { className?: string }) {
       <path d={LOGO.word} fill="currentColor" />
     </svg>
   );
+}
+
+/**
+ * Reveal on scroll: `shown` turns true once, when the element first enters the
+ * viewport. Pair it with the `.reveal` / `.is-in` classes in index.css.
+ */
+export function useReveal<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') { setShown(true); return; }
+    const io = new IntersectionObserver(entries => {
+      if (entries.some(e => e.isIntersecting)) { setShown(true); io.disconnect(); }
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return { ref, shown };
 }
