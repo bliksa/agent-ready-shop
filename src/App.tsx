@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, FormEvent, ReactNode, Suspense, lazy } from 'react';
 import { absUrl, withBase, STATIC } from './utils/base';
-import { runAudit, AuditError, AuditErrorKind, AUDIT_STEPS, baseChecks, checkCopy } from './data/auditConfig';
+import { runAudit, AuditError, AuditErrorKind, AUDIT_STEPS, baseChecks, checkCopy, diagnose } from './data/auditConfig';
 import { AuditResult, AuditCheck } from './types';
 import { PluginDashboard } from './PluginDashboard';
 import { Certificate } from './Certificate';
@@ -308,8 +308,8 @@ function ResultsView({ result, onCertify }: { result: AuditResult; onCertify: ()
     setTimeout(() => setShared(false), 2000);
   };
   const score = result.totalScore;
-  // "Invisible" is only true of a store that scored nothing at all.
-  const level = score >= 85 ? 'gold' : score >= 60 ? 'blue' : score > 0 ? 'critical' : 'none';
+  const level = score >= 85 ? 'gold' : score >= 60 ? 'blue' : 'critical';
+  const verdict = diagnose(result.checks, score);
   // Under the headline, name the checks: what is missing, what is half done, what already works.
   const things = (list: AuditCheck[]) => {
     const names = list.map(c => checkCopy(lang, c.id).thing);
@@ -319,7 +319,8 @@ function ResultsView({ result, onCertify }: { result: AuditResult; onCertify: ()
   const missing = byLoss.filter(c => c.score === 0);
   const partial = byLoss.filter(c => c.score > 0 && c.score < c.maxScore);
   const working = result.checks.filter(c => c.score >= c.maxScore);
-  const summary = level === 'gold' ? t.results.sublineGold : [
+  const lead = verdict === 'locked' ? t.results.lockedLead : verdict === 'invisible' ? t.results.invisibleLead : '';
+  const summary = verdict === 'ready' ? t.results.sublineGold : lead + [
     missing.length ? t.results.summary.missing + things(missing) + '.' : '',
     partial.length ? t.results.summary.partial + things(partial) + '.' : '',
     working.length ? t.results.summary.working + things(working) + '.' : '',
@@ -352,7 +353,7 @@ function ResultsView({ result, onCertify }: { result: AuditResult; onCertify: ()
           <Dashes total={20} on={Math.round(score / 5)} className="dashes-fill dashes-tight mt-5" />
         </div>
         <div className="min-w-0">
-          <h1 className="display display-lg mb-5">{t.results.headline[level]}</h1>
+          <h1 className="display display-lg mb-5">{t.results.headline[verdict]}</h1>
           <p className="lead max-w-[640px] mb-7" style={{ color: 'var(--ink2)' }}>{summary}</p>
           <div className="flex flex-wrap items-center gap-2">
             <a href={withBase('/api/download-plugin')} className="btn btn-primary">{t.common.getPlugin}</a>

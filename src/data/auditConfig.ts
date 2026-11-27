@@ -82,6 +82,30 @@ const CHECK_COPY: Record<Lang, Record<CheckId, CheckCopy>> = {
   },
 };
 
+export type Diagnosis =
+  | 'ready' | 'locked' | 'invisible' | 'partial' | 'notYet'
+  | 'robots' | 'robotsSome' | 'schema' | 'llms' | 'feed' | 'api' | 'agent';
+
+/**
+ * What is actually wrong with the store, read off which checks fail rather than off the total.
+ * In order: agents shut out by robots.txt; nothing machine-readable at all; certified; exactly
+ * one thing wrong, which is then named; otherwise a general verdict.
+ */
+export function diagnose(checks: AuditCheck[], total: number): Diagnosis {
+  const of = (id: CheckId) => checks.find(c => c.id === id);
+  const zero = (id: CheckId) => (of(id)?.score ?? 0) === 0;
+  // robots.txt scores 0 only when every agent is disallowed (4: some are, 8: no stated policy).
+  if (zero('robots')) return 'locked';
+  if (zero('schema') && zero('llms') && zero('feed') && zero('api')) return 'invisible';
+  if (total >= 85) return 'ready';
+  const failed = checks.filter(c => c.score === 0);
+  const partial = checks.filter(c => c.score > 0 && c.score < c.maxScore);
+  // One check at zero stands out even beside a half-done one; with none at zero, a lone half-done one does.
+  const one = failed.length === 1 ? failed[0] : failed.length === 0 && partial.length === 1 ? partial[0] : null;
+  if (one) return one.id === 'robots' && one.score <= 4 ? 'robotsSome' : one.id;
+  return total >= 60 ? 'partial' : 'notYet';
+}
+
 export const checkCopy = (lang: Lang, id: CheckId): CheckCopy => CHECK_COPY[lang][id];
 
 export type AuditErrorKind = 'rate' | 'invalid' | 'server' | 'network';

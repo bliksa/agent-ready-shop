@@ -55,8 +55,25 @@ const en = {
     pluginActive: 'Plugin active',
     compatible: 'Plugin compatible',
     scoreLabel: 'score',
-    // The headline only says how far along the store is; the line under it names what is wrong.
-    headline: { gold: 'Your store is agent ready', blue: 'Partially agent-ready', critical: 'Not agent-ready yet', none: 'Invisible to AI agents' },
+    // The headline is a diagnosis read off the pattern of checks (see diagnose() in auditConfig.ts),
+    // not a band of the score; the line under it lists the checks by name.
+    headline: {
+      ready: 'Your store is agent ready',
+      locked: 'AI agents are locked out',
+      invisible: 'Invisible to AI agents',
+      partial: 'Partially agent-ready',
+      notYet: 'Not agent-ready yet',
+      // exactly one thing is wrong
+      robots: 'Unclear rules for AI agents',
+      robotsSome: 'Some AI agents are blocked',
+      schema: 'Agents can’t read your products',
+      llms: 'Only llms.txt is missing',
+      feed: 'Agents can’t list your catalogue',
+      api: 'Agents have no product API',
+      agent: 'Agents can read it, not buy',
+    },
+    lockedLead: 'Your robots.txt turns every shopping and answer agent away, so they never get to the rest. ',
+    invisibleLead: 'Nothing here is machine-readable, so an agent has only raw pages to guess from. ',
     sublineGold: 'Agents can read your catalogue and transact. Claim your certificate and show the trust badge.',
     summary: {
       missing: 'Missing: ',
