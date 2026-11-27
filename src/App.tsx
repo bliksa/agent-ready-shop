@@ -14,7 +14,7 @@ import { Directory } from './Directory';
 import { PluginShots } from './PluginShots';
 import { normalizeDomain } from './utils/badge';
 import { useT } from './i18n';
-import { SectionHead, Dashes, DetectLabel, Mark } from './ui';
+import { SectionHead, Dashes, DetectLabel, Mark, Slash } from './ui';
 import heroImage from './assets/claudia-chrome.webp';
 
 // Internal vendor tool: only the Node build ships it. The literal env check lets
@@ -124,7 +124,7 @@ function TopBar({ onHome, onPlugin, onDirectory, onNewAudit }: { onHome: () => v
       <div className="wrap">
         <div className="topbar-row">
           <button type="button" className="wordmark" onClick={onHome} aria-label={t.nav.home}>
-            <span className="wordmark-name"><Mark /><i aria-hidden="true">/</i>Shop</span>
+            <span className="wordmark-name"><Mark /><Slash />Shop</span>
             <span className="wordmark-tld">Agent Ready</span>
           </button>
           <div className="nav">
@@ -142,7 +142,7 @@ function Footer() {
   return (
     <footer className="border-t border-line">
       <div className="wrap py-7 flex flex-wrap items-center justify-between gap-4">
-        <span className="label label-dim"><span style={{ color: 'var(--ink)' }}><Mark /><span style={{ color: 'var(--clay)' }}>/</span>Shop</span> · Agent Ready Shop</span>
+        <span className="label label-dim"><span style={{ color: 'var(--ink)' }}><Mark /><Slash />Shop</span> · Agent Ready Shop</span>
         <a href={withBase('/api/download-plugin')} className="link">{t.common.getPlugin}</a>
       </div>
     </footer>

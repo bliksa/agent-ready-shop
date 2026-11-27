@@ -89,7 +89,7 @@ input, select, textarea { color-scheme: dark; }
 .topbar-row { height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .wordmark { display: inline-flex; align-items: baseline; gap: 12px; background: none; border: 0; padding: 0; cursor: pointer; position: relative; color: var(--ink); white-space: nowrap; }
 /* A/SHOP: the A is a mark whose left leg is cut free (see Mark in ui.tsx), followed by the clay slash. */
-.wordmark-name i { font-style: normal; color: var(--clay); margin: 0 0.06em 0 -0.1em; }
+.slash { display: inline-block; height: 0.92em; width: auto; margin: 0 0.16em 0 -0.04em; vertical-align: -0.1em; }
 .mark { display: inline-block; height: 0.74em; width: auto; margin-right: 0.14em; vertical-align: baseline; color: var(--ink); }
 .wordmark-name { font-family: var(--sans); font-weight: 700; font-size: 17px; letter-spacing: 0.12em; text-transform: uppercase; }
 .wordmark-tld { font-family: var(--mono); font-weight: 500; font-size: 10.5px; letter-spacing: 0.14em; color: var(--ink3); text-transform: uppercase; }
@@ -156,9 +156,11 @@ input, select, textarea { color-scheme: dark; }
 
 /* ---------- hero: Claudia in chrome behind the pitch ---------- */
 .hero { position: relative; isolation: isolate; padding-block: clamp(40px, 6vw, 80px) clamp(48px, 7vw, 96px); min-height: min(78vh, 720px); display: flex; flex-direction: column; justify-content: center; }
-.hero-bg { position: absolute; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%); z-index: -1; background-size: cover; background-position: 72% 28%; border-bottom: 1px solid var(--chrome-edge); }
+.hero-bg { position: absolute; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%); z-index: -1; background-color: var(--bg); background-repeat: no-repeat; background-size: cover; background-position: 78% 28%; border-bottom: 1px solid var(--chrome-edge); }
 /* The scrim keeps the copy readable: solid on the text side, clear over her face. */
-.hero-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10, 11, 13, 0.94) 0%, rgba(10, 11, 13, 0.82) 34%, rgba(10, 11, 13, 0.28) 62%, rgba(10, 11, 13, 0.08) 100%), linear-gradient(180deg, rgba(10, 11, 13, 0.5) 0%, transparent 22%, transparent 78%, rgba(10, 11, 13, 0.7) 100%); }
+.hero-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 17%, rgba(10, 11, 13, 0.84) 40%, rgba(10, 11, 13, 0.3) 66%, rgba(10, 11, 13, 0.06) 100%), linear-gradient(180deg, rgba(10, 11, 13, 0.5) 0%, transparent 22%, transparent 78%, rgba(10, 11, 13, 0.7) 100%); }
+/* On wide screens the still is pushed right so her face clears the copy; the scrim hides its left edge. */
+@media (min-width: 901px) { .hero-bg { background-position: calc(50% + 15vw) 28%; } }
 @media (max-width: 900px) { .hero-bg::after { background: linear-gradient(180deg, rgba(10, 11, 13, 0.72), rgba(10, 11, 13, 0.9)); } }
 .hero-credit { position: absolute; right: 0; bottom: 14px; text-decoration: none; }
 .hero-credit:hover { color: var(--ink); }

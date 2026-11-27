@@ -29,24 +29,33 @@ export function DetectLabel({ name, value }: { name: string; value?: string }) {
 export const ratio = (score: number, max: number): string => (max > 0 ? score / max : 0).toFixed(2);
 
 /**
- * The mark: a capital A whose left leg is a clay slash, cut free from the rest of
- * the letter by a gap. Sized by the surrounding font (cap height). The same
- * drawing on a black square is public/favicon.svg.
+ * The mark: a capital A whose left leg is cut free from the rest of the letter
+ * by a gap. Sized by the surrounding font (cap height). public/favicon.svg is
+ * the same letter on a black square, with the leg in clay.
  */
 export function Mark({ className = '' }: { className?: string }) {
   const id = useId();
   const leg = 'M3 27 11.5 5H16L7.5 27z';
   return (
-    <svg className={`mark ${className}`} viewBox="3 5 26 22" role="img" aria-label="A">
+    <svg className={`mark ${className}`} viewBox="3 5 26 22" role="img" aria-label="A" fill="currentColor">
       <mask id={id}>
         <rect x="0" y="0" width="32" height="32" fill="#fff" />
         <path d={leg} fill="#000" stroke="#000" strokeWidth="3.2" />
       </mask>
-      <g mask={`url(#${id})`} fill="currentColor">
+      <g mask={`url(#${id})`}>
         <path d="M16 5h4.5L29 27h-4.5z" />
         <path d="M9 17.4h13.5v4.1H9z" />
       </g>
-      <path d={leg} fill="var(--clay)" />
+      <path d={leg} />
+    </svg>
+  );
+}
+
+/** The clay slash of A/SHOP, drawn at the weight of the bold wordmark (a typed "/" is too thin). */
+export function Slash() {
+  return (
+    <svg className="slash" viewBox="0 0 15 26" aria-hidden="true">
+      <path d="M0 26 10 0h5L5 26z" fill="var(--clay)" />
     </svg>
   );
 }
