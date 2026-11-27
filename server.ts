@@ -210,6 +210,33 @@ function looksLikeProductSchema(html: string): boolean {
     || html.includes('"@type":"offer"') || html.includes('og:type" content="product') || html.includes("og:type' content='product");
 }
 
+/**
+ * Name the store platform from fingerprints in the (lower-cased) storefront HTML, or null.
+ * Each marker is something only that platform emits — asset hosts, bootstrap attributes — so
+ * ordinary text cannot match: the old rule looked for "mage/", which every "image/png" contains.
+ * Keep in sync with ars_detect_platform() in static/lib.php.
+ */
+const PLATFORMS: [string, string[]][] = [
+  ['Shopify', ['cdn.shopify.com', 'myshopify.com', 'var shopify', 'shopify.theme']],
+  ['Shoptet', ['myshoptet.com', 'shoptet.']],
+  ['Upgates', ['upgates.com', 'upgates.']],
+  ['PrestaShop', ['var prestashop', 'content="prestashop', '/modules/ps_']],
+  ['Magento', ['x-magento-init', 'data-mage-init', 'mage/cookies', '/static/version', '/static/frontend/', 'magento']],
+  ['Shopware', ['shopware']],
+  ['BigCommerce', ['bigcommerce.com']],
+  ['OpenCart', ['catalog/view/theme', 'index.php?route=']],
+  ['Wix', ['wixstatic.com']],
+  ['Squarespace', ['squarespace.com', 'squarespace-cdn.com']],
+];
+function detectPlatform(html: string): string | null {
+  const any = (needles: string[]) => needles.some(n => html.includes(n));
+  if (any(['wp-content/', 'wp-includes/', 'name="generator" content="wordpress'])) {
+    return html.includes('woocommerce') ? 'WordPress / WooCommerce' : 'WordPress';
+  }
+  for (const [name, needles] of PLATFORMS) if (any(needles)) return name;
+  return null;
+}
+
 /** Live audit of a store — shared by the analyzer and the certificate verifier.
  *  Deterministic by design: canonical origin, retried fetches, validated bodies. */
 async function runAudit(targetUrl: string, clientIp = 'local'): Promise<AuditData> {
@@ -254,14 +281,8 @@ async function runAudit(targetUrl: string, clientIp = 'local'): Promise<AuditDat
     if (home.ok) {
       html = home.text.toLowerCase();
       if (BLOCK_MARKERS.test(html) && html.length < 20000) blocked = true; // short challenge page, not a real storefront
-      if (html.includes('wp-content') || html.includes('wordpress')) {
-        platform = 'WordPress';
-        if (html.includes('woocommerce')) { platform = 'WordPress / WooCommerce'; isWooCommerce = true; }
-      } else if (html.includes('cdn.shopify.com') || html.includes('var shopify')) platform = 'Shopify';
-      else if (html.includes('shoptet')) platform = 'Shoptet';
-      else if (html.includes('upgates')) platform = 'Upgates';
-      else if (html.includes('prestashop')) platform = 'PrestaShop';
-      else if (html.includes('magento') || html.includes('mage/')) platform = 'Magento';
+      const found = detectPlatform(html);
+      if (found) { platform = found; isWooCommerce = found === 'WordPress / WooCommerce'; }
 
       if (looksLikeProductSchema(html)) s.schema = { score: 20, pass: true };
       else if (html.includes('application/ld+json')) s.schema = { score: 14, pass: false }; // structured data, not commerce-typed

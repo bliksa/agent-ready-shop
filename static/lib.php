@@ -555,6 +555,44 @@ function ars_is_certified( $audit ) {
 }
 
 /**
+ * Name the store platform from fingerprints in the (lower-cased) storefront HTML, or null.
+ * Each marker is something only that platform emits — asset hosts, bootstrap attributes — so
+ * ordinary text cannot match: the old rule looked for "mage/", which every "image/png" contains.
+ * Keep in sync with detectPlatform() in server.ts.
+ */
+function ars_detect_platform( $html ) {
+	$any = function ( array $needles ) use ( $html ) {
+		foreach ( $needles as $n ) {
+			if ( false !== strpos( $html, $n ) ) {
+				return true;
+			}
+		}
+		return false;
+	};
+	if ( $any( array( 'wp-content/', 'wp-includes/', 'name="generator" content="wordpress' ) ) ) {
+		return $any( array( 'woocommerce' ) ) ? 'WordPress / WooCommerce' : 'WordPress';
+	}
+	$platforms = array(
+		'Shopify'     => array( 'cdn.shopify.com', 'myshopify.com', 'var shopify', 'shopify.theme' ),
+		'Shoptet'     => array( 'myshoptet.com', 'shoptet.' ),
+		'Upgates'     => array( 'upgates.com', 'upgates.' ),
+		'PrestaShop'  => array( 'var prestashop', 'content="prestashop', '/modules/ps_' ),
+		'Magento'     => array( 'x-magento-init', 'data-mage-init', 'mage/cookies', '/static/version', '/static/frontend/', 'magento' ),
+		'Shopware'    => array( 'shopware' ),
+		'BigCommerce' => array( 'bigcommerce.com' ),
+		'OpenCart'    => array( 'catalog/view/theme', 'index.php?route=' ),
+		'Wix'         => array( 'wixstatic.com' ),
+		'Squarespace' => array( 'squarespace.com', 'squarespace-cdn.com' ),
+	);
+	foreach ( $platforms as $name => $needles ) {
+		if ( $any( $needles ) ) {
+			return $name;
+		}
+	}
+	return null;
+}
+
+/**
  * Live audit of a store. Throws InvalidArgumentException for unusable targets
  * and ARS_Rate_Limited when the caller has run too many fresh audits.
  */
@@ -614,22 +652,10 @@ function ars_run_audit( $target ) {
 			$has = function ( $needle ) use ( $html ) {
 				return false !== strpos( $html, $needle );
 			};
-			if ( $has( 'wp-content' ) || $has( 'wordpress' ) ) {
-				$platform = 'WordPress';
-				if ( $has( 'woocommerce' ) ) {
-					$platform = 'WordPress / WooCommerce';
-					$is_woo   = true;
-				}
-			} elseif ( $has( 'cdn.shopify.com' ) || $has( 'var shopify' ) ) {
-				$platform = 'Shopify';
-			} elseif ( $has( 'shoptet' ) ) {
-				$platform = 'Shoptet';
-			} elseif ( $has( 'upgates' ) ) {
-				$platform = 'Upgates';
-			} elseif ( $has( 'prestashop' ) ) {
-				$platform = 'PrestaShop';
-			} elseif ( $has( 'magento' ) || $has( 'mage/' ) ) {
-				$platform = 'Magento';
+			$found = ars_detect_platform( $html );
+			if ( null !== $found ) {
+				$platform = $found;
+				$is_woo   = 'WordPress / WooCommerce' === $found;
 			}
 
 			if ( ars_looks_like_product_schema( $html ) ) {
