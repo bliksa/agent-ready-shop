@@ -3,8 +3,8 @@
  * Offline license validation (Ed25519, asymmetric).
  *
  * License keys are self-describing tokens that validate entirely offline (no
- * phone-home). A key encodes version, plan, expiry, feature set and a serial,
- * signed with the vendor's Ed25519 PRIVATE key. This plugin ships only the
+ * phone-home). A key encodes version, plan, expiry, feature set, a serial and
+ * (optionally) the store domain it is bound to, signed with the vendor's Ed25519 PRIVATE key. This plugin ships only the
  * PUBLIC key and verifies the signature via libsodium, so distributing the
  * plugin publicly does not let anyone forge keys.
  *
@@ -150,6 +150,18 @@ class AFS_License {
 			}
 		}
 
+		// Optional 6th field: the store this key was sold for.
+		$bound = isset( $parts[5] ) ? strtolower( trim( $parts[5] ) ) : '';
+		if ( '' !== $bound && '*' !== $bound && ! self::domain_matches( $bound, self::site_domain() ) ) {
+			return array(
+				'valid'  => false,
+				'plan'   => $plan,
+				'domain' => $bound,
+				/* translators: 1: licensed domain, 2: this site's domain */
+				'error'  => sprintf( __( 'This license is issued for %1$s and cannot be used on %2$s.', 'agent-ready-shop' ), $bound, self::site_domain() ),
+			);
+		}
+
 		$features = ( '*' === $feat ) ? '*' : array_values( array_filter( explode( ',', $feat ) ) );
 
 		return array(
@@ -158,7 +170,34 @@ class AFS_License {
 			'exp'      => $exp_ts,
 			'features' => $features,
 			'serial'   => $serial,
+			'domain'   => ( '' === $bound ) ? '*' : $bound,
 		);
+	}
+
+	/**
+	 * This site's domain: host only, lower-case, no www.
+	 *
+	 * @return string
+	 */
+	public static function site_domain() {
+		$host = strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
+		return preg_replace( '/^www\./', '', $host );
+	}
+
+	/**
+	 * Does a license bound to $bound cover $site? Exact host match, plus local
+	 * development hosts so a store can be built before it goes live.
+	 *
+	 * @param string $bound Domain in the license.
+	 * @param string $site  This site's domain.
+	 * @return bool
+	 */
+	private static function domain_matches( $bound, $site ) {
+		if ( $bound === $site ) {
+			return true;
+		}
+		$is_local = 'localhost' === $site || (bool) preg_match( '/\.(test|local|localhost|invalid)$/', $site ) || (bool) filter_var( $site, FILTER_VALIDATE_IP );
+		return (bool) apply_filters( 'afs_license_domain_matches', $is_local, $bound, $site );
 	}
 
 	/**

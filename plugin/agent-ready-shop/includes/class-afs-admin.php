@@ -222,6 +222,10 @@ class AFS_Admin {
 				'<code>' . esc_html( $data['serial'] ) . '</code>',
 				esc_html( $expires )
 			);
+			if ( ! empty( $data['domain'] ) && '*' !== $data['domain'] ) {
+				/* translators: %s: licensed domain */
+				echo ' &middot; ' . sprintf( esc_html__( 'Licensed for: %s', 'agent-ready-shop' ), '<code>' . esc_html( $data['domain'] ) . '</code>' );
+			}
 			echo '</p>';
 
 			echo '<p style="margin:.4em 0"><em>' . esc_html__( 'Unlocked features:', 'agent-ready-shop' ) . '</em></p><ul style="margin:.2em 0 .6em 1.4em">';
@@ -243,11 +247,12 @@ class AFS_Admin {
 			echo '<h3 style="margin:.2em 0">' . esc_html__( 'Your Agent Ready certificate', 'agent-ready-shop' ) . '</h3>';
 			printf(
 				'<p style="margin:.2em 0">%s <code>%s</code> &middot; <a href="%s" target="_blank" rel="noopener">%s</a></p>',
-				esc_html__( 'Certificate ID:', 'agent-ready-shop' ),
+				esc_html__( 'Reference ID:', 'agent-ready-shop' ),
 				esc_html( AFS_Certificate::cert_id() ),
 				esc_url( AFS_Certificate::verify_url() ),
 				esc_html__( 'View public verification', 'agent-ready-shop' )
 			);
+			echo '<p class="description" style="margin:.2em 0">' . esc_html__( 'The badge shows the score from the live audit the Agent Ready Shop service runs against your public site (refreshed daily). It cannot be set from here.', 'agent-ready-shop' ) . '</p>';
 			echo '<p style="margin:.6em 0 .2em"><strong>' . esc_html__( 'Preview:', 'agent-ready-shop' ) . '</strong></p>';
 			echo '<p>' . $embed . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built with esc_url internally.
 			echo '<p style="margin:.6em 0 .2em"><strong>' . esc_html__( 'Embed code (paste anywhere):', 'agent-ready-shop' ) . '</strong></p>';
@@ -283,7 +288,8 @@ class AFS_Admin {
 
 		// Score card.
 		echo '<div style="flex:1;min-width:300px;background:#fff;border:1px solid #c3c4c7;border-radius:4px;padding:16px 18px">';
-		echo '<h2 style="margin:0 0 10px">' . esc_html__( 'AIO score', 'agent-ready-shop' ) . '</h2>';
+		echo '<h2 style="margin:0 0 4px">' . esc_html__( 'Setup score', 'agent-ready-shop' ) . '</h2>';
+		echo '<p class="description" style="margin:0 0 10px">' . esc_html__( 'How much of the agent layer is switched on in this plugin. Your public AIO score is measured separately by a live audit:', 'agent-ready-shop' ) . ' <a href="' . esc_url( AFS_Certificate::verify_url() ) . '" target="_blank" rel="noopener">' . esc_html__( 'run it now', 'agent-ready-shop' ) . '</a>.</p>';
 		echo '<div style="display:flex;align-items:center;gap:16px">';
 		echo '<div style="width:88px;height:88px;border-radius:50%;border:6px solid ' . esc_attr( $color ) . ';display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">';
 		echo '<span style="font-size:28px;font-weight:700;color:' . esc_attr( $color ) . '">' . (int) $score . '</span>';

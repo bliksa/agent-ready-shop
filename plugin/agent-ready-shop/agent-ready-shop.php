@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Agent Ready Shop
- * Plugin URI:        https://agentreadyshop.com
+ * Plugin URI:        https://www.godot.sk/ashop/
  * Description:       Makes a WooCommerce store maximally legible to AI shopping agents and mints a verifiable "Agent Ready Certified" trust badge: Schema.org structured data, a machine-readable product feed/API, an llms.txt manifest, a /.well-known discovery document, an OpenAPI spec, explicit AI-crawler permissions, and an embeddable certificate badge.
  * Version:           1.0.0
  * Requires at least: 6.0
@@ -24,9 +24,16 @@ define( 'AFS_FILE', __FILE__ );
 define( 'AFS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AFS_URL', plugin_dir_url( __FILE__ ) );
 define( 'AFS_REST_NAMESPACE', 'agent-shop/v1' );
-define( 'AFS_VERIFY_BASE', 'https://agentreadyshop.com' );
-// Auto-update source (Pro). Point at your Agent Ready Shop service; filter with `afs_update_url`.
-define( 'AFS_UPDATE_URL', 'https://agentreadyshop.com/api/update/agent-ready-shop.json' );
+// The Agent Ready Shop service this plugin talks to (badge image, public
+// verification page, Pro update manifest). It is the folder the website build
+// is hosted in; the release build stamps the real address in here. Override in
+// wp-config.php with define( 'AFS_SERVICE_URL', 'https://…' ) if you self-host.
+if ( ! defined( 'AFS_SERVICE_URL' ) ) {
+	define( 'AFS_SERVICE_URL', 'https://www.godot.sk/ashop' );
+}
+define( 'AFS_VERIFY_BASE', untrailingslashit( AFS_SERVICE_URL ) ); // kept for back-compat
+// Auto-update source (Pro); filter with `afs_update_url`.
+define( 'AFS_UPDATE_URL', AFS_VERIFY_BASE . '/api.php?action=update' );
 
 require_once AFS_DIR . 'includes/class-afs-settings.php';
 require_once AFS_DIR . 'includes/class-afs-license.php';

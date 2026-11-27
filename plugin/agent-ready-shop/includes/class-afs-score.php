@@ -1,7 +1,9 @@
 <?php
 /**
- * AIO (AI Optimization) score — the same 0..100 signal the Agent Ready web
- * analyzer computes, but derived from the plugin's own active configuration.
+ * Setup score (0..100): how much of the plugin's agent layer is switched on,
+ * derived from the plugin's own configuration. It is a checklist for the
+ * merchant. The PUBLIC score on the badge and verification page is measured
+ * independently by the Agent Ready Shop service's live audit and can differ.
  *
  * @package AgentReadyShop
  */
@@ -22,7 +24,8 @@ class AFS_Score {
 
 		return array(
 			// Free tier — "get discovered" (max 50).
-			'robots'   => array( 15, 15, __( 'AI agent access (robots.txt)', 'agent-ready-shop' ), 'free' ),
+			// WordPress serves "Disallow: /" to everyone while "Discourage search engines" is on.
+			'robots'   => array( get_option( 'blog_public' ) ? 15 : 0, 15, __( 'AI agent access (robots.txt)', 'agent-ready-shop' ), 'free' ),
 			'llms'     => array( 10, 10, __( 'llms.txt manifest', 'agent-ready-shop' ), 'free' ),
 			'schema'   => array( $json_ld ? 10 : 0, 10, __( 'Product JSON-LD schema', 'agent-ready-shop' ), 'free' ),
 			'api'      => array( 15, 15, __( 'Read-only Agent Commerce API', 'agent-ready-shop' ), 'free' ),

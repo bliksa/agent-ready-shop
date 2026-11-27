@@ -22,8 +22,8 @@ The Express server (`server.ts`) provides the live endpoints the app needs:
 | Endpoint | Purpose |
 |---|---|
 | `GET /api/run-audit?url=` | Live audit of a store, scoring the 6 AIO checks against the plugin's real endpoints |
-| `GET /api/badge?d=&s=&style=` | Renders the embeddable SVG trust badge |
-| `GET /verify/:id?d=&s=` | Public certificate verification page (re-derives the cert from the domain) |
+| `GET /api/badge?d=&style=` | Renders the embeddable SVG trust badge with the score from the server's own last live audit (never from the URL) |
+| `GET /verify?d=` | Public verification page: re-audits the domain live and reports whether it is certified |
 | `GET /api/download-plugin` | Zips and serves the real plugin from `plugin/agent-ready-shop/` |
 
 ## The plugin
@@ -33,10 +33,13 @@ The real WordPress plugin lives in [`plugin/agent-ready-shop/`](plugin/agent-rea
 Key pieces:
 - Agent Commerce API (`agent-shop/v1`), manifest, OpenAPI, llms.txt, robots.txt, JSON + Google XML feeds.
 - Offline HMAC license system (`tools/generate-license.php`).
-- `class-afs-certificate.php` — mints the certificate and injects the trust badge. **The certificate ID is derived with the exact same algorithm as [`src/utils/badge.ts`](src/utils/badge.ts)**, so a badge emitted by the plugin verifies against this web service without a shared database.
+- `class-afs-certificate.php` — mints the certificate and injects the trust badge. The plugin only passes the store domain to the service; the score shown on the badge is the one the service measured.
 
 ## How the certificate works
 
-`certId = ARS-{base36(hash(domain))}-{base36(hash(secret+domain))}`
+A store is certified when **our own live audit** of it finds a working Agent Ready Shop product API and a score of 60 or more. Tiers: **Certified** (85+), **Verified** (60–84), else not certified.
 
-Because it is deterministic and domain-bound, `/verify` can confirm a badge is genuine by recomputing the ID from the claimed domain — tamper-evident, no database. Tiers: **Certified** (85+), **Verified** (60–84), else not certified.
+- The badge (`/api/badge?d=domain`) shows the score from the server's last audit of that domain, refreshed daily. A score or tier is never read from the URL, so a badge cannot claim what the store did not earn.
+- The verification page (`/verify?d=domain`) re-audits the store when it is opened.
+- A manifest alone is only a claim: it counts once the product API it points to answers on the same host with product data.
+- `ARS-…` IDs are a reference label derived from the domain with a public constant. They are not secret and are not part of the verification.

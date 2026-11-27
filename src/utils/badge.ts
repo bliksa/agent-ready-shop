@@ -3,8 +3,10 @@
  *
  * Isomorphic (no browser/node-only APIs) so the exact same logic runs in the
  * React frontend, the Express server, and — mirrored in PHP — inside the
- * WordPress plugin. The certificate ID is derived deterministically from the
- * store domain, so a badge link can be verified without a database.
+ * static PHP build (static/lib.php). The certificate ID is a reference label
+ * derived from the domain with a public constant: it is NOT a secret and
+ * proves nothing by itself. A certificate is valid only when the service's own
+ * live audit says so.
  */
 
 export type Tier = 'gold' | 'blue' | 'none';
@@ -92,42 +94,44 @@ export function verifyCertId(domain: string, certId: string): boolean {
 }
 
 const COLORS: Record<Tier, { accent: string; accentSoft: string }> = {
-  gold: { accent: '#b8860b', accentSoft: '#e9c766' },
-  blue: { accent: '#10a37f', accentSoft: '#5fded0' },
-  none: { accent: '#8c8f94', accentSoft: '#c3c4c7' },
+  gold: { accent: '#d97757', accentSoft: '#3a1d12' },
+  blue: { accent: '#b9a37e', accentSoft: '#2f2718' },
+  none: { accent: '#6f747b', accentSoft: '#d6d8db' },
 };
 
 export interface BadgeOpts {
   domain: string;
-  score: number;
+  /** Live score, or null when the store was never audited. */
+  score: number | null;
   style?: 'dark' | 'light';
+  /** Whether the last live audit certified the store (default true, for previews). */
+  certified?: boolean;
 }
 
-/** Render the embeddable SVG badge (240x56). */
-export function buildBadgeSvg({ domain, score, style = 'dark' }: BadgeOpts): string {
-  const tier = getTier(score);
+/** Render the embeddable SVG badge (240x56). Keep in sync with ars_badge_svg() in static/lib.php. */
+export function buildBadgeSvg({ domain, score, style = 'dark', certified = true }: BadgeOpts): string {
+  const tier: Tier = certified && score !== null ? getTier(score) : 'none';
   const { accent, accentSoft } = COLORS[tier];
   const dark = style === 'dark';
-  const bg = dark ? '#1d2327' : '#ffffff';
-  const stroke = dark ? 'none' : '#dcdcde';
-  const main = dark ? '#ffffff' : '#1d2327';
-  const short = tierShort(tier);
-  const dom = normalizeDomain(domain).slice(0, 26);
+  const bg = dark ? '#0a0b0d' : '#ece9e2';
+  const stroke = dark ? '#33363b' : '#c9c5bb';
+  const main = dark ? '#ece9e2' : '#0a0b0d';
+  const sub = dark ? '#6f747b' : '#5c6066';
+  const onAccent = tier === 'none' ? '#ffffff' : '#0a0b0d';
+  const short = tier === 'none' ? 'NOT VERIFIED' : tierShort(tier);
+  const dom = normalizeDomain(domain).slice(0, 26).replace(/[^a-z0-9.\-]/g, '');
+  const num = score === null ? '–' : String(Math.round(score));
+  const mono = "'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace";
+  const sans = "'Helvetica Neue', Helvetica, Arial, sans-serif";
 
   return `<svg width="240" height="56" viewBox="0 0 240 56" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agent Ready ${short}">
-  <rect x="0.5" y="0.5" width="239" height="55" rx="7" fill="${bg}" stroke="${stroke}"/>
-  <g transform="translate(16,14)">
-    <rect width="28" height="28" rx="7" fill="${accent}"/>
-    <rect x="7" y="9" width="14" height="11" rx="2.5" fill="#ffffff"/>
-    <circle cx="11" cy="14.5" r="1.7" fill="${accent}"/>
-    <circle cx="17" cy="14.5" r="1.7" fill="${accent}"/>
-    <rect x="12.5" y="3.5" width="3" height="4" rx="1.5" fill="#ffffff"/>
-  </g>
-  <text x="54" y="24" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="${main}" letter-spacing="0.3">AGENT READY</text>
-  <text x="54" y="39" font-family="Arial, Helvetica, sans-serif" font-size="9.5" font-weight="700" fill="${accent}" letter-spacing="0.6">${short}</text>
-  <text x="54" y="50" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="${dark ? '#8c8f94' : '#8c8f94'}">${dom}</text>
-  <rect x="184" y="13" width="42" height="30" rx="5" fill="${accent}"/>
-  <text x="205" y="30" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">${score}</text>
-  <text x="205" y="39" font-family="Arial, Helvetica, sans-serif" font-size="6.5" fill="${accentSoft}" text-anchor="middle" letter-spacing="0.5">/ 100 AIO</text>
+  <rect x="0.5" y="0.5" width="239" height="55" fill="${bg}" stroke="${stroke}"/>
+  <rect x="14" y="13" width="3" height="30" fill="${accent}"/>
+  <text x="26" y="25" font-family="${sans}" font-size="13" font-weight="700" fill="${main}" letter-spacing="1.6">AGENT READY</text>
+  <text x="26" y="38" font-family="${mono}" font-size="8.5" font-weight="500" fill="${accent}" letter-spacing="1.2">${short}</text>
+  <text x="26" y="49" font-family="${mono}" font-size="7.5" fill="${sub}">${dom}</text>
+  <rect x="184" y="13" width="42" height="30" fill="${accent}"/>
+  <text x="205" y="31" font-family="${sans}" font-size="16" font-weight="700" fill="${onAccent}" text-anchor="middle">${num}</text>
+  <text x="205" y="39.5" font-family="${mono}" font-size="5.5" fill="${tier === 'none' ? accentSoft : onAccent}" text-anchor="middle" letter-spacing="0.6">/ 100 AIO</text>
 </svg>`;
 }

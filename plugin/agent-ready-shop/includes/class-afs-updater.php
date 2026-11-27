@@ -57,7 +57,13 @@ class AFS_Updater {
 			return null;
 		}
 		$data = json_decode( wp_remote_retrieve_body( $res ), true );
-		if ( ! is_array( $data ) || empty( $data['version'] ) ) {
+		if ( ! is_array( $data ) || empty( $data['version'] ) || ! is_string( $data['version'] ) ) {
+			return null;
+		}
+		// The package must come over HTTPS from the same host as the manifest, so
+		// a tampered or mistaken manifest cannot point WordPress at a foreign zip.
+		$package = isset( $data['download_url'] ) ? (string) $data['download_url'] : '';
+		if ( 'https' !== wp_parse_url( $package, PHP_URL_SCHEME ) || wp_parse_url( $package, PHP_URL_HOST ) !== wp_parse_url( $url, PHP_URL_HOST ) ) {
 			return null;
 		}
 		set_transient( 'afs_update_meta', $data, 6 * HOUR_IN_SECONDS );
@@ -88,7 +94,7 @@ class AFS_Updater {
 			'tested'      => $data['tested'] ?? '',
 			'requires'    => $data['requires'] ?? '',
 			'requires_php' => $data['requires_php'] ?? '',
-			'url'         => 'https://example.com/agent-ready-shop',
+			'url'         => AFS_VERIFY_BASE . '/',
 		);
 		return $transient;
 	}

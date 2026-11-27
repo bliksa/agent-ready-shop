@@ -48,14 +48,28 @@ reverse proxy, no URL rewrites.
 
 ```bash
 npm ci
-npm run build:static          # → site/ashop/  and  site/ashop.zip
+SITE_URL=https://your-domain/ashop npm run build:static   # → site/ashop/  and  site/ashop.zip
 ```
+
+`SITE_URL` is the public address of the folder (default `https://www.godot.sk/ashop`).
+It is stamped into the bundled plugin zip, so badges, the verification link and
+Pro update checks of every plugin downloaded from this site point back at it.
 
 Upload the `site/ashop/` folder into the web root (FTP / file manager) so it is
 reachable at `https://your-domain/ashop/`. Requirements: PHP 7.4+ with the
 cURL extension and outbound HTTP allowed. For a different folder name run
 `node scripts/build-static.mjs <name>`; paths are relative, so the folder works
 anywhere.
+
+The PHP scripts create a `data/` sub-folder next to themselves (audit results
+for badges, rate-limit counters). It is protected with a deny-all `.htaccess`;
+on nginx add `location ~ /data/ { deny all; }`. Keep it when you re-upload a new
+build, or badges fall back to "not verified" until the next audit.
+
+Abuse protection built into the audit endpoint: 12 fresh audits per client IP
+per 10 minutes and 300 per hour site-wide (constants at the top of
+`static/lib.php`), public hosts only, default ports only, every redirect hop
+re-checked and the connection pinned to the address that was checked.
 
 Not included in this version: license issuing (`/api/license/*`) — that needs
 the private key and stays on the Node service. The "Buy Pro" demo button is
@@ -84,8 +98,8 @@ location /ashop/ { proxy_pass http://127.0.0.1:3000; proxy_set_header Host $host
 location = /ashop { return 301 /ashop/; }
 ```
 
-Badges and update checks emitted by the plugin point at `AFS_VERIFY_BASE` /
-`AFS_UPDATE_URL` in `plugin/agent-ready-shop/agent-ready-shop.php`; change those
+Badges and update checks emitted by the plugin point at `AFS_SERVICE_URL`
+in `plugin/agent-ready-shop/agent-ready-shop.php`; change that
 if the subdirectory install is the production service.
 
 ---
@@ -170,8 +184,10 @@ If your shared host has **no Node option**, it won't run this site — use Path 
 3. In the **plugin**, set it to talk to your live domain — edit
    `plugin/agent-ready-shop/agent-ready-shop.php`:
    ```php
-   define( 'AFS_VERIFY_BASE', 'https://agentreadyshop.com' );
-   define( 'AFS_UPDATE_URL',  'https://agentreadyshop.com/api/update/agent-ready-shop.json' );
+   define( 'AFS_SERVICE_URL', 'https://yourdomain' );   // or https://yourdomain/ashop
    ```
+   (`npm run build:static` does this for the bundled zip via `SITE_URL`.) The
+   plugin calls `badge.php`, `verify.php` and `api.php?action=update` under that
+   address; the Node server answers the same paths.
 4. Smoke test: open `https://yourdomain/` → run an audit; hit
-   `https://yourdomain/api/badge?d=demo.com&s=90` → should return an SVG.
+   `https://yourdomain/api/badge?d=demo.com` → should return an SVG (grey "NOT VERIFIED" for a store without the plugin — the score always comes from the server's own audit).

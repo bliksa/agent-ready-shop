@@ -2,10 +2,11 @@
 /**
  * Agent Ready certificate + embeddable trust badge.
  *
- * The certificate ID is derived deterministically from the store domain using
- * the SAME algorithm as the Agent Ready Shop web service (src/utils/badge.ts),
- * so any badge this plugin emits verifies against agentreadyshop.com/verify
- * without a shared database.
+ * The badge image and the verification page are served by the Agent Ready Shop
+ * service (AFS_SERVICE_URL). Both show the result of the service's OWN live
+ * audit of this store: the plugin only passes the store domain, never a score.
+ * The certificate ID is a reference label derived from the domain (same
+ * algorithm as src/utils/badge.ts); it is not a secret and proves nothing.
  *
  * @package AgentReadyShop
  */
@@ -33,21 +34,6 @@ class AFS_Certificate {
 		return preg_replace( '/^www\./', '', strtolower( $host ) );
 	}
 
-	/**
-	 * AIO score the store advertises. The plugin delivers robots + llms +
-	 * schema + API + feed (85); the verifiable certificate adds the final 15.
-	 *
-	 * @return int
-	 */
-	public static function score() {
-		return AFS_Score::value();
-	}
-
-	/** Certificate tier from score. */
-	public static function tier() {
-		return AFS_Score::tier();
-	}
-
 	/** Deterministic certificate ID (matches the web service). */
 	public static function cert_id() {
 		$d = self::domain();
@@ -56,19 +42,19 @@ class AFS_Certificate {
 
 	/** Public verification URL. */
 	public static function verify_url() {
-		return AFS_VERIFY_BASE . '/verify/' . self::cert_id() . '?d=' . rawurlencode( self::domain() ) . '&s=' . self::score();
+		return AFS_VERIFY_BASE . '/verify.php?d=' . rawurlencode( self::domain() );
 	}
 
 	/** Hosted badge image URL. */
 	public static function badge_url( $style = 'dark' ) {
 		$style = ( 'light' === $style ) ? 'light' : 'dark';
-		return AFS_VERIFY_BASE . '/api/badge?d=' . rawurlencode( self::domain() ) . '&s=' . self::score() . '&style=' . $style;
+		return AFS_VERIFY_BASE . '/badge.php?d=' . rawurlencode( self::domain() ) . '&style=' . $style;
 	}
 
 	/** The embed HTML a store owner can paste anywhere. */
 	public static function embed_html( $style = 'dark' ) {
 		return '<a href="' . esc_url( self::verify_url() ) . '" target="_blank" rel="noopener">'
-			. '<img src="' . esc_url( self::badge_url( $style ) ) . '" alt="Agent Ready Certified" width="240" height="56" loading="lazy" />'
+			. '<img src="' . esc_url( self::badge_url( $style ) ) . '" alt="Agent Ready — live audit result" width="240" height="56" loading="lazy" />'
 			. '</a>';
 	}
 
@@ -83,8 +69,7 @@ class AFS_Certificate {
 		}
 		return array(
 			'id'         => self::cert_id(),
-			'tier'       => self::tier(),
-			'score'      => self::score(),
+			// No self-declared score or tier: the verify page reports the live-audited ones.
 			'verify_url' => self::verify_url(),
 			'badge_url'  => self::badge_url(),
 		);

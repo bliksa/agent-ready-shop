@@ -29,10 +29,13 @@ if ( 'run-audit' === $action ) {
 		$a = ars_run_audit( $url );
 	} catch ( InvalidArgumentException $e ) {
 		ars_json( array( 'error' => $e->getMessage() ), 400 );
+	} catch ( ARS_Rate_Limited $e ) {
+		header( 'Retry-After: 300' );
+		ars_json( array( 'error' => $e->getMessage() ), 429 );
 	} catch ( Throwable $e ) {
 		ars_json( array( 'error' => 'Audit failed' ), 500 );
 	}
-	unset( $a['origin'], $a['total'] );
+	unset( $a['origin'], $a['total'], $a['t'] );
 	ars_json( $a );
 }
 
@@ -46,7 +49,7 @@ if ( 'update' === $action ) {
 		'tested'       => '6.6',
 		'requires'     => '6.0',
 		'requires_php' => '7.4',
-		'changelog'    => 'See agentreadyshop.com/changelog',
+		'changelog'    => 'See the changelog in readme.txt inside the plugin archive.',
 	) );
 }
 

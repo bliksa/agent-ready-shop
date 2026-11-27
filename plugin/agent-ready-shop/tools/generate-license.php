@@ -6,7 +6,10 @@
  * the private signing key; the plugin only holds the public key.
  *
  * Provide the sodium secret key (base64, 64 bytes) via env:
- *   ARS_LICENSE_SK="…" php generate-license.php --plan=pro --expires=never --features='*'
+ *   ARS_LICENSE_SK="…" php generate-license.php --plan=pro --expires=never --features='*' --domain=store.com
+ *
+ * --domain binds the key to one store (host, no www). Omit it only for keys that
+ * must work on any site.
  *
  * @package AgentReadyShop
  */
@@ -31,11 +34,16 @@ if ( false === $sk || SODIUM_CRYPTO_SIGN_SECRETKEYBYTES !== strlen( $sk ) ) {
 	exit( 1 );
 }
 
-$opts     = getopt( '', array( 'plan::', 'expires::', 'features::', 'count::' ) );
+$opts     = getopt( '', array( 'plan::', 'expires::', 'features::', 'count::', 'domain::' ) );
 $plan     = isset( $opts['plan'] ) ? preg_replace( '/[^a-z0-9_-]/i', '', $opts['plan'] ) : 'pro';
 $features = $opts['features'] ?? '*';
 $count    = isset( $opts['count'] ) ? max( 1, (int) $opts['count'] ) : 1;
 $exp_in   = isset( $opts['expires'] ) ? strtolower( $opts['expires'] ) : 'never';
+$domain   = isset( $opts['domain'] ) ? preg_replace( '/^www\./', '', preg_replace( '#[/:?\#].*$#', '', preg_replace( '#^https?://#', '', strtolower( trim( $opts['domain'] ) ) ) ) ) : '';
+if ( '' !== $domain && ! preg_match( '/^[a-z0-9.\-]+$/', $domain ) ) {
+	fwrite( STDERR, "Invalid --domain.\n" );
+	exit( 1 );
+}
 $exp      = ( 'never' === $exp_in || '0' === $exp_in || '' === $exp_in ) ? '0' : gmdate( 'Ymd', strtotime( $exp_in ) );
 
 function afs_base32_encode( $data ) {
@@ -53,12 +61,12 @@ function afs_base32_encode( $data ) {
 
 echo str_repeat( '-', 60 ) . "\n";
 echo "Agent Ready Shop — license keys (Ed25519)\n";
-echo "  plan: {$plan} · expires: " . ( '0' === $exp ? 'never' : $exp ) . " · features: {$features}\n";
+echo "  plan: {$plan} · expires: " . ( '0' === $exp ? 'never' : $exp ) . " · features: {$features} · domain: " . ( '' === $domain ? 'any' : $domain ) . "\n";
 echo str_repeat( '-', 60 ) . "\n";
 
 for ( $i = 0; $i < $count; $i++ ) {
 	$serial  = substr( bin2hex( random_bytes( 4 ) ), 0, 6 );
-	$payload = "v1|{$plan}|{$exp}|{$features}|{$serial}";
+	$payload = "v1|{$plan}|{$exp}|{$features}|{$serial}" . ( '' === $domain ? '' : "|{$domain}" );
 	$sig     = sodium_crypto_sign_detached( $payload, $sk );
 	$key     = afs_base32_encode( $payload . "\x1f" . $sig );
 	echo implode( '-', str_split( $key, 5 ) ) . "\n";

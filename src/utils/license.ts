@@ -37,10 +37,16 @@ function loadPrivateKey(): crypto.KeyObject {
 
 let privateKey: crypto.KeyObject | null = null;
 
-export interface IssueOpts { plan?: string; features?: string; expires?: string; }
-export interface IssuedLicense { key: string; plan: string; features: string; expires: string; serial: string; }
+export interface IssueOpts { plan?: string; features?: string; expires?: string; /** Store domain the key is bound to; '' or '*' = any site. */ domain?: string; }
+export interface IssuedLicense { key: string; plan: string; features: string; expires: string; serial: string; domain: string; }
 
-export function issueLicense({ plan = 'pro', features = '*', expires = 'never' }: IssueOpts = {}): IssuedLicense {
+/** Host only, lower-case, no www — must match AFS_License::site_domain() in the plugin. */
+export function licenseDomain(input: string): string {
+  const d = (input || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/[/:?#].*$/, '').replace(/^www\./, '');
+  return /^[a-z0-9.-]+$/.test(d) ? d : '';
+}
+
+export function issueLicense({ plan = 'pro', features = '*', expires = 'never', domain = '' }: IssueOpts = {}): IssuedLicense {
   if (!privateKey) privateKey = loadPrivateKey();
 
   let exp = '0';
@@ -49,9 +55,11 @@ export function issueLicense({ plan = 'pro', features = '*', expires = 'never' }
     if (!isNaN(d.getTime())) exp = d.toISOString().slice(0, 10).replace(/-/g, '');
   }
   const serial = crypto.randomBytes(4).toString('hex').slice(0, 6);
-  const payload = Buffer.from(`v1|${plan}|${exp}|${features}|${serial}`);
+  // Field 6 binds the key to one store. Keys without it (legacy) work on any site.
+  const bound = licenseDomain(domain);
+  const payload = Buffer.from(`v1|${plan}|${exp}|${features}|${serial}` + (bound ? `|${bound}` : ''));
   const sig = crypto.sign(null, payload, privateKey); // Ed25519 → 64 raw bytes
   const blob = Buffer.concat([payload, Buffer.from([0x1f]), sig]);
   const key = (b32enc(blob).match(/.{1,5}/g) || []).join('-');
-  return { key, plan, features, expires: exp === '0' ? 'never' : expires, serial };
+  return { key, plan, features, expires: exp === '0' ? 'never' : expires, serial, domain: bound || '*' };
 }

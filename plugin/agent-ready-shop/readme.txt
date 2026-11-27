@@ -34,7 +34,7 @@ The site-level layer (llms.txt, robots.txt AI rules, JSON-LD passthrough, AI ana
 * **Advanced analytics + CSV export**, custom llms.txt, unlimited agents, automatic updates.
 * **Agent Ready Certified** trust badge + a public, live-verified certificate — your marketing asset.
 
-Learn more and upgrade at https://agentreadyshop.com
+Learn more at https://www.godot.sk/ashop/
 
 == Installation ==
 
@@ -52,7 +52,7 @@ No. Analytics and all core features run entirely on your server. See "External s
 Discovery files still serve, but product data and checkout require WooCommerce.
 
 = How does the certificate stay trustworthy? =
-The public verification page re-audits your live site and only shows "valid" when the plugin is actually detected — a badge can't be faked by a store that doesn't run it.
+The badge and the public verification page show the result of a live audit the service runs against your site: the score is measured, not declared by the store, and "valid" requires the plugin's product API to actually answer.
 
 == Screenshots ==
 
@@ -66,7 +66,7 @@ The public verification page re-audits your live site and only shows "valid" whe
 
 This plugin can make outbound requests to these services. All are optional and disclosed for transparency:
 
-* **agentreadyshop.com** — When a Pro license is active and the badge is enabled, the storefront badge image is loaded from `agentreadyshop.com/api/badge` and links to `agentreadyshop.com/verify/...`. The Pro auto-updater checks `agentreadyshop.com/api/update/agent-ready-shop.json` for new versions. Data sent: your site domain and AIO score (for the badge), plugin version (for updates). Terms: https://agentreadyshop.com/terms — Privacy: https://agentreadyshop.com/privacy
+* **Agent Ready Shop service** (`www.godot.sk/ashop` by default; change it with the `AFS_SERVICE_URL` constant) — When a Pro license is active and the badge is enabled, the storefront badge image is loaded from `…/badge.php` and links to `…/verify.php`. Both receive only your site domain; the service then audits your public site itself and shows the score it measured. The Pro auto-updater checks `…/api.php?action=update` for new versions and only accepts a package served over HTTPS from that same host. Data sent: your site domain (badge, verification) and nothing else; visitors' browsers request the badge image from the service.
 * **AI operator IP-range lists** — For verified-bot / spoof detection, the plugin fetches the public IP-range files that AI operators publish (e.g. openai.com, developers.google.com, bing.com, perplexity.ai) and caches them for 24h. Only the operator's own published list is requested; no visitor data is sent. This confirms that a request claiming to be a given bot really originates from that operator.
 
 You can disable analytics (and thus the range lookups) and the badge in the plugin settings.

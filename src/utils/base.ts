@@ -17,7 +17,7 @@ function staticPath(p: string): string {
   if (p === '/') return './';
   if (p.startsWith('/api/download-plugin')) return 'agent-ready-shop.zip';
   if ((m = p.match(/^\/api\/badge(\?.*)?$/))) return 'badge.php' + (m[1] || '');
-  if ((m = p.match(/^\/verify\/([^?]*)(?:\?(.*))?$/))) return `verify.php?id=${m[1]}${m[2] ? '&' + m[2] : ''}`;
+  if ((m = p.match(/^\/verify(?:\/[^?]*)?(?:\?(.*))?$/))) return 'verify.php' + (m[1] ? '?' + m[1] : '');
   if ((m = p.match(/^\/api\/([^?]+)(?:\?(.*))?$/))) return `api.php?action=${m[1]}${m[2] ? '&' + m[2] : ''}`;
   return '.' + p;
 }

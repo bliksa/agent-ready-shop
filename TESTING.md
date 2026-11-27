@@ -50,7 +50,8 @@ BASE=http://localhost:8080 bash test/smoke.sh
 
 ## 4. Certificate integrity
 
-The web verifier (`/verify/:id`) re-audits the live domain and only shows
-"valid" when the plugin is actually detected. Confirm a domain **without** the
+The web verifier (`/verify?d=domain`) re-audits the live domain and only shows
+"valid" when the plugin's product API actually answers. The badge
+(`/api/badge?d=domain`) takes its score from that audit, never from the URL. Confirm a domain **without** the
 plugin shows "Not verified", and your Docker store (once the manifest is
 reachable publicly, e.g. via a tunnel) shows "Valid — verified live".

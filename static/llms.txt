@@ -1,0 +1,24 @@
+# Agent Ready Shop
+
+> Free live audit that measures how well an online store can be read and bought from by AI shopping agents, plus a WordPress/WooCommerce plugin that adds the missing machine-readable layer.
+
+## What the audit checks (100 points)
+
+- AI agent access (15): does robots.txt actually allow shopping and answer agents (OAI-SearchBot, ChatGPT-User, GPTBot, ClaudeBot, Claude-User, PerplexityBot)?
+- Structured data (20): Schema.org Product / Offer markup on a real product page.
+- llms.txt (15): a plain-text context document for language models.
+- Product feed (15): a machine-readable catalog (feed or product JSON); a sitemap alone earns partial credit.
+- Product API (15): a structured, queryable product API.
+- Agent-commerce layer (20): a working agent manifest, ACP or MCP discovery document. Vendor-neutral.
+
+## Endpoints on this site
+
+- [Run an audit](api.php?action=run-audit&url=example.com): JSON result for a store domain. Rate limited.
+- [Verify a store](verify.php?d=example.com): re-audits the store live and shows whether it is certified.
+- [Badge](badge.php?d=example.com): SVG badge with the score from the last live audit.
+- [Plugin download](agent-ready-shop.zip): the free WordPress plugin (GPL-2.0-or-later).
+
+## Notes for agents
+
+- Scores are never accepted from URL parameters; they come from audits this server runs itself.
+- The auditor identifies itself with the user agent "AgentReadyShop/1.0".
